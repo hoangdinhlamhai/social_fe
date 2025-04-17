@@ -1,5 +1,43 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { publicRoutes } from './routes';
+import { Fragment } from 'react';
+import Home from '~/pages/Home';
+import DefaultLayout from './layouts/DefaultLayout';
+
 function App() {
-    return <h1>hehe</h1>;
+    return (
+        <Router>
+            <div className="App">
+                <Routes>
+                    {publicRoutes.map((route, index) => {
+                        const Page = route.component;
+                        // let Layout = Home;
+
+                        // if (route.layout) {
+                        //     Layout = route.layout;
+                        // } else if (route.layout === null) {
+                        //     Layout = Fragment;
+                        // }
+
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    // <Layout>
+                                    <DefaultLayout>
+                                        <Page />
+                                    </DefaultLayout>
+
+                                    // </Layout>
+                                }
+                            />
+                        );
+                    })}
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
