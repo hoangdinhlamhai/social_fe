@@ -1,0 +1,88 @@
+.header {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd; 
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px clamp(16px, 5vw, 40px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  line-height: 1;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.brand {
+  font-weight: bold;
+  color: #0a66c2;
+  font-size: 18px;
+}
+
+.center {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  color: #888;
+}
+
+.searchInput {
+  padding: 6px 8px 6px 30px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.right {
+  flex: 1.2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: nowrap;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #444;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    color: #0a66c2;
+  }
+
+  svg {
+    margin-bottom: 2px;
+  }
+}
