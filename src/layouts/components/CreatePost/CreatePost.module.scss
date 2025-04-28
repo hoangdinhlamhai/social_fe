@@ -1,0 +1,72 @@
+.wrapper {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 16px 10px 16px;
+    margin-bottom: 16px;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.startPostBtn {
+    flex: 1;
+    padding: 12px 16px;
+    background: #f0f2f5;
+    border: 1px solid #ccc;
+    border-radius: 24px;
+    text-align: left;
+    color: #666;
+    cursor: pointer;
+
+    &:hover {
+        background: #e4e6e9;
+    }
+}
+
+.bottom {
+    display: flex;
+    justify-content: center; /* nằm giữa */
+    gap: 136px; /* khoảng cách giữa các nút */
+    margin-top: 8px;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 4px;
+
+    &:hover {
+        background-color: #f3f3f3;
+    }
+
+    .icon {
+        margin-right: 6px;
+        font-size: 18px;
+    }
+
+    &:nth-child(1) .icon {
+        color: #70b5f9; // Video - xanh dương nhạt
+    }
+    &:nth-child(2) .icon {
+        color: #7fc15e; // Ảnh - xanh lá
+    }
+    &:nth-child(3) .icon {
+        color: #e7a33e; // Bài viết - cam
+    }
+}
