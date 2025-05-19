@@ -1,0 +1,128 @@
+.profile-header {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cover-photo {
+    height: 200px;
+    background: linear-gradient(to right, #d3d3d3, #e0e0e0);
+    position: relative;
+}
+
+.camera-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    border-radius: 50%;
+    padding: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.avatar-wrapper {
+    position: absolute;
+    bottom: -46px;
+    left: 24px;
+    z-index: 2;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #b0c4de;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    position: relative;
+}
+
+.avatar-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    object-fit: cover;
+}
+
+.add-icon {
+    position: absolute;
+    bottom: 15px;
+    right: 6px;
+    transform: translate(25%, 25%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #0a66c2;
+    color: #0a66c2;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.profile-info {
+    padding: 60px 26px 20px; // đẩy xuống sau avatar
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.main-info .name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.title {
+    color: #555;
+    font-size: 16px;
+}
+
+.location {
+    font-size: 16px;
+    color: #666;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.primary-button {
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.outlined-button {
+    border: 1px solid #0a66c2;
+    color: #0a66c2;
+    background-color: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #eaf1fb;
+    }
+}

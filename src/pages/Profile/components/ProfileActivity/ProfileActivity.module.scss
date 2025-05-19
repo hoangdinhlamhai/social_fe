@@ -1,0 +1,136 @@
+.activity-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 24px 16px 24px;
+    border: 1px solid #ddd;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    h2 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    p {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .follow-button {
+        background-color: #eef3f8;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .tab {
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid #ccc;
+        background: none;
+        cursor: pointer;
+        font-size: 14px;
+
+        &.active {
+            background-color: #e9f5ff;
+            border-color: #0073b1;
+            color: #0073b1;
+        }
+    }
+}
+
+.post-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+}
+
+.view-more {
+    margin-top: 12px;
+    text-align: center;
+    a {
+        color: #0073b1;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+}
+
+//scroll
+.scroll-wrapper {
+    position: relative;
+}
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffffcc;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.2s;
+
+    &:hover {
+        background-color: #f3f3f3;
+    }
+
+    &.left {
+        left: -12px;
+    }
+
+    &.right {
+        right: -12px;
+    }
+}
+
+.post-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 8px;
+
+    & > * {
+        flex: 0 0 calc(50% - 6px); // 2 card mỗi hàng, trừ khoảng gap
+    }
+
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+}
+
