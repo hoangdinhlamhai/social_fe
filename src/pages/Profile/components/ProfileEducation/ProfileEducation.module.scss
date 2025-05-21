@@ -1,0 +1,94 @@
+.education-section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 16px 24px 16px 24px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+
+    h2 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .education-item {
+        display: flex;
+        gap: 12px;
+        padding: 16px 0;
+        border-top: 1px solid #eee;
+
+        &:first-of-type {
+            border-top: none;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin-top: 4px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .content {
+            flex: 1;
+
+            .name {
+                font-weight: 600;
+                font-size: 16px;
+            }
+
+            .school {
+                font-size: 14px;
+                color: #111;
+            }
+
+            .time {
+                font-size: 13px;
+                color: #777;
+            }
+
+            .class {
+                font-size: 13px;
+                color: #777;
+            }
+
+            .description {
+                font-size: 14px;
+                color: #333;
+                line-height: 1.5;
+                margin: 8px 0;
+            }
+
+            .skills {
+                font-size: 14px;
+                font-weight: 600;
+                color: #222;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: 6px;
+
+                svg {
+                    font-size: 16px;
+                    color: #555;
+                }
+            }
+        }
+    }
+}
+
+.view-more {
+    margin-top: 12px;
+    text-align: center;
+    a {
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+}
