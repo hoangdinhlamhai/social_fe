@@ -1,10 +1,35 @@
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import { FaApple, FaGoogle } from 'react-icons/fa';
+import { useState } from 'react';
+import { loginApi } from '~/services/auth.service';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function Login() {
+    const navigate = useNavigate();
+    const [inputData, setInputData] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
+
+    const handleLogin = async () => {
+        try {
+            console.log('Đăng nhập với:', inputData.email, inputData.password); // <-- đặt trước await
+
+            const res = await loginApi(inputData.email, inputData.password);
+
+            localStorage.setItem('accessToken', res.accessToken);
+            localStorage.setItem('user', JSON.stringify(res.user));
+
+            navigate('/');
+
+            console.log('Đã gọi navigate');
+        } catch (err) {
+            console.log('Lỗi khi login:', err);
+            setError(err.response?.data?.message || 'Login failed!');
+        }
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('card')}>
@@ -22,9 +47,30 @@ function Login() {
                     <span>or</span>
                 </div>
 
-                <input className={cx('input')} placeholder="Email or phone" />
+                <input
+                    className={cx('input')}
+                    placeholder="Email or phone"
+                    value={inputData.email}
+                    onChange={(e) =>
+                        setInputData((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                        }))
+                    }
+                />
                 <div className={cx('password-container')}>
-                    <input className={cx('input')} type="password" placeholder="Password" />
+                    <input
+                        className={cx('input')}
+                        value={inputData.password}
+                        type="password"
+                        placeholder="Password"
+                        onChange={(e) =>
+                            setInputData((prev) => ({
+                                ...prev,
+                                password: e.target.value,
+                            }))
+                        }
+                    />
                     <button className={cx('show-btn')}>Show</button>
                 </div>
 
@@ -32,7 +78,9 @@ function Login() {
                     Forgot password?
                 </a>
 
-                <button className={cx('sign-in-btn')}>Sign in</button>
+                <button className={cx('sign-in-btn')} onClick={handleLogin}>
+                    Sign in
+                </button>
 
                 <div className={cx('join-now')}>
                     New to LinkedIn? <a href="#">Join now</a>
@@ -54,3 +102,6 @@ function Login() {
 }
 
 export default Login;
+
+// Gọi `setState()` một lần duy nhất : Dùng trực tiếp state (`...formData`)
+// Gọi `setState()` nhiều lần liền nhau : Dùng callback với `prev` (`...prev`)
