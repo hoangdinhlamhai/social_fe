@@ -16,5 +16,14 @@ const loginApi = async (email, password) => {
 
     return response.data; // res là { accessToken, user } ở json mà api trả về có
 };
+
+const logoutApi = async () => {
+    await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
+
+    // Xoá token ở localStorage (nếu có)
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
+};
+
 //Viết code với async/await dễ đọc (thay vì .then().catch() rối rắm)
-export { loginApi };
+export { loginApi, logoutApi };

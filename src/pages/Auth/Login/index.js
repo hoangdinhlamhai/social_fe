@@ -14,16 +14,12 @@ function Login() {
 
     const handleLogin = async () => {
         try {
-            console.log('Đăng nhập với:', inputData.email, inputData.password); // <-- đặt trước await
-
             const res = await loginApi(inputData.email, inputData.password);
 
             localStorage.setItem('accessToken', res.accessToken);
             localStorage.setItem('user', JSON.stringify(res.user));
 
             navigate('/');
-
-            console.log('Đã gọi navigate');
         } catch (err) {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');

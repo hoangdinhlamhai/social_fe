@@ -2,6 +2,8 @@ import styles from './Header.module.scss';
 import classNames from 'classnames/bind';
 import { Home, Users, Briefcase, MessageSquare, Bell, User, Search, ChevronDown } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { logoutApi } from '~/services/auth.service';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -14,6 +16,13 @@ const navItems = [
 ];
 
 function Header() {
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logoutApi();
+        navigate('/login');
+    };
+
     return (
         <header className={cx('header')}>
             <div className={cx('container')}>
@@ -83,7 +92,9 @@ function Header() {
                                 </DropdownMenu.Item>
                             </div>
 
-                            <DropdownMenu.Item className={cx('menuItem', 'btnLogout')}>Đăng xuất</DropdownMenu.Item>
+                            <DropdownMenu.Item className={cx('menuItem', 'btnLogout')} onClick={handleLogout}>
+                                Đăng xuất
+                            </DropdownMenu.Item>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>
                 </nav>
