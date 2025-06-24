@@ -1,9 +1,17 @@
 import classNames from 'classnames/bind';
 import styles from './ProfileHeader.module.scss';
+import EditProfileModal from '../EditProfileModal';
+import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
 function ProfileHeader() {
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+
+    const openModal = () => {
+        setEditModalOpen(true);
+    };
+
     return (
         <div className={cx('profile-header')}>
             <div className={cx('cover-photo')}>
@@ -34,11 +42,13 @@ function ProfileHeader() {
 
                     <div className={cx('actions')}>
                         <button className={cx('primary-button')}>Đang tìm việc</button>
-                        <button className={cx('outlined-button')}>Phần Thêm hồ sơ</button>
-                        <button className={cx('outlined-button')}>Cải thiện hồ sơ</button>
-                        <button className={cx('outlined-button')}>Tải nguyên</button>
+                        <button className={cx('outlined-button')} onClick={openModal}>
+                            Chỉnh sửa hồ sơ
+                        </button>
                     </div>
                 </div>
+
+                <EditProfileModal isOpen={isEditModalOpen} onRequestClose={() => setEditModalOpen(false)} />
             </div>
         </div>
     );

@@ -1,0 +1,102 @@
+.overlay {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+}
+
+.modal {
+    background: #fff;
+    width: 600px;
+    max-height: 90vh;
+    margin: auto;
+    margin-top: 5vh;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+        margin: 0;
+    }
+
+    .close-btn {
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+}
+
+.modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+
+    label {
+        font-weight: 500;
+        font-size: 14px;
+        margin-top: 12px;
+        display: block;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .checkbox {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+
+        label {
+            margin-left: 8px;
+        }
+    }
+
+    .info {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    .contact {
+        margin-top: 20px;
+
+        a {
+            color: #0073b1;
+            text-decoration: none;
+        }
+    }
+}
+
+.modal-footer {
+    border-top: 1px solid #ddd;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: flex-end;
+
+    .save-btn {
+        background-color: #0a66c2;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
