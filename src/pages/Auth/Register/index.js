@@ -2,8 +2,8 @@ import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 import { FaApple, FaGoogle } from 'react-icons/fa';
 import { useState } from 'react';
-import { loginApi } from '~/services/auth.service';
 import { useNavigate } from 'react-router-dom';
+import { registerApi } from '~/services/auth.service';
 
 const cx = classNames.bind(styles);
 
@@ -18,17 +18,20 @@ function Register() {
     });
     const [error, setError] = useState('');
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            const res = await loginApi(inputData.email, inputData.password);
+            await registerApi(
+                inputData.email,
+                inputData.password,
+                inputData.accountType,
+                inputData.firstName,
+                inputData.lastName,
+            );
 
-            localStorage.setItem('accessToken', res.accessToken);
-            localStorage.setItem('user', JSON.stringify(res.user));
-
-            navigate('/');
+            navigate('/login');
         } catch (err) {
-            console.log('Lỗi khi login:', err);
-            setError(err.response?.data?.message || 'Login failed!');
+            console.log('Lỗi khi register:', err);
+            setError(err.response?.data?.message || 'Register failed!');
         }
     };
 
@@ -114,12 +117,12 @@ function Register() {
                     <option value="COMPANY">Company</option>
                 </select>
 
-                <button className={cx('sign-in-btn')} onClick={handleLogin}>
+                <button className={cx('sign-in-btn')} onClick={handleRegister}>
                     Sign up
                 </button>
 
                 <div className={cx('join-now')}>
-                    Have an account? <a href="/login">Join now</a>
+                    Have an account? <a href="/login">Sign in</a>
                 </div>
             </div>
 

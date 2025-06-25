@@ -2,6 +2,18 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080';
 
+const registerApi = async (email, password, accountType, firstName, lastName) => {
+    const response = await axios.post(`${BASE_URL}/register`, {
+        email,
+        password,
+        accountType,
+        firstName,
+        lastName,
+    });
+
+    return response.data; // res là { accessToken, user } ở json mà api trả về có
+};
+
 const loginApi = async (email, password) => {
     const response = await axios.post(
         `${BASE_URL}/login`,
@@ -26,4 +38,4 @@ const logoutApi = async () => {
 };
 
 //Viết code với async/await dễ đọc (thay vì .then().catch() rối rắm)
-export { loginApi, logoutApi };
+export { loginApi, logoutApi, registerApi };
