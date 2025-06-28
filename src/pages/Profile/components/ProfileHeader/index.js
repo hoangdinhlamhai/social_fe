@@ -1,16 +1,45 @@
 import classNames from 'classnames/bind';
 import styles from './ProfileHeader.module.scss';
 import EditProfileModal from '../EditProfileModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 function ProfileHeader() {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [profileData, setProfileData] = useState(null);
+    const [error, setError] = useState('');
+
+    const { accessToken, accountLogin } = useSelector((state) => state.auth);
+
+    const email = accountLogin?.email;
+
+    //useEffect luôn chạy sau khi render, không đồng bộ với render.
+    useEffect(() => {
+        axios
+            .get(`http://localhost:8080/api/users/${email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
+                },
+            })
+            .then((res) => {
+                setProfileData(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError('Không thể tải thông tin người dùng.');
+            });
+    }, [email]); // Chỉ chạy lại khi email thay đổi
 
     const openModal = () => {
         setEditModalOpen(true);
     };
+
+    if (!profileData) {
+        return <div>Đang tải thông tin người dùng...</div>; // hoặc loader component
+    }
 
     return (
         <div className={cx('profile-header')}>
@@ -34,8 +63,10 @@ function ProfileHeader() {
             <div className={cx('profile-info')}>
                 <div className={cx('info-section')}>
                     <div className={cx('main-info')}>
-                        <h2 className={cx('name')}>Hoàng Đình Lâm Hải</h2>
-                        <span className={cx('title')}>heri</span>
+                        <h2 className={cx('name')}>
+                            {profileData.firstName} {profileData.lastName}
+                        </h2>
+                        <span className={cx('title')}>{profileData.bio}</span>
                         <div className={cx('location')}>Đà Nẵng, Da Nang City, Vietnam</div>
                         <span className={cx('title')}>228.204 người theo dõi</span>
                     </div>

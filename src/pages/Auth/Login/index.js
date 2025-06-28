@@ -4,6 +4,8 @@ import { FaApple, FaGoogle } from 'react-icons/fa';
 import { useState } from 'react';
 import { loginApi } from '~/services/auth.service';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAuth } from '~/redux/slices/authSlice';
 
 const cx = classNames.bind(styles);
 
@@ -12,12 +14,14 @@ function Login() {
     const [inputData, setInputData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
+    const dispatch = useDispatch();
+
     const handleLogin = async () => {
         try {
             const res = await loginApi(inputData.email, inputData.password);
 
-            localStorage.setItem('accessToken', res.accessToken);
-            localStorage.setItem('user', JSON.stringify(res.user));
+            // Lưu accessToken và userLogin
+            dispatch(setAuth({ accessToken: res.accessToken, accountLogin: res.accountLogin }));
 
             navigate('/');
         } catch (err) {
