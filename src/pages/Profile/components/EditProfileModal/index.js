@@ -1,6 +1,9 @@
 import Modal from 'react-modal';
 import classNames from 'classnames/bind';
 import styles from './EditProfileModal.module.scss';
+import { getMeProfileApi } from '~/services/user.service';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 //chỉ định phần tử gốc của ứng dụng React (thường là #root) để khi mở modal,
@@ -8,6 +11,28 @@ const cx = classNames.bind(styles);
 Modal.setAppElement('#root');
 
 function EditProfileModal({ isOpen, onRequestClose }) {
+    const [profileData, setProfileData] = useState(null);
+    const { accessToken } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        // setProfileData(getMeProfileApi({ accessToken })); không thể sử dụng trực tiếp như vậy vì getMeProfileApi là hàm bất đồng bộ (async function)
+        // cần phải sử dụng async/await hoặc .then() để lấy dữ liệu trả về
+        const fetchProfile = async () => {
+            try {
+                const data = await getMeProfileApi({ accessToken });
+                setProfileData(data);
+            } catch (err) {
+                console.error('Lỗi khi lấy profile:', err);
+            }
+        };
+
+        if (isOpen) {
+            fetchProfile();
+        }
+    }, [isOpen]);
+
+    console.log('profileData', profileData);
+
     return (
         <Modal isOpen={isOpen} onRequestClose={onRequestClose} className={cx('modal')} overlayClassName={cx('overlay')}>
             <div className={cx('modal-header')}>
@@ -19,13 +44,25 @@ function EditProfileModal({ isOpen, onRequestClose }) {
 
             <div className={cx('modal-body')}>
                 <label>Tên*</label>
-                <input type="text" placeholder="Lâm Hải" />
+                {profileData ? (
+                    <input type="text" placeholder="Nhập tên" value={profileData.firstName} />
+                ) : (
+                    <input type="text" placeholder="Nhập tên" />
+                )}
 
                 <label>Họ*</label>
-                <input type="text" placeholder="Hoàng Đình" />
+                {profileData ? (
+                    <input type="text" placeholder="Nhập họ" value={profileData.lastName} />
+                ) : (
+                    <input type="text" placeholder="Nhập họ" />
+                )}
 
                 <label>Tiểu sử</label>
-                <input type="text" placeholder="heri" />
+                {profileData ? (
+                    <input type="text" placeholder="Mô tả thêm về bạn" value={profileData.bio} />
+                ) : (
+                    <input type="text" placeholder="Mô tả thêm về bạn" />
+                )}
 
                 <label>Ngành*</label>
                 <input type="text" placeholder="Technology, Information and Internet" />
