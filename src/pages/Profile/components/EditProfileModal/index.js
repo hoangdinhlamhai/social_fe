@@ -1,7 +1,7 @@
 import Modal from 'react-modal';
 import classNames from 'classnames/bind';
 import styles from './EditProfileModal.module.scss';
-import { getMeProfileApi } from '~/services/user.service';
+import { getMeProfileApi, updateUserProfileApi } from '~/services/user.service';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -12,7 +12,8 @@ Modal.setAppElement('#root');
 
 function EditProfileModal({ isOpen, onRequestClose }) {
     const [profileData, setProfileData] = useState(null);
-    const { accessToken } = useSelector((state) => state.auth);
+    const { accessToken, accountLogin } = useSelector((state) => state.auth);
+    const userId = accountLogin?.id;
 
     useEffect(() => {
         // setProfileData(getMeProfileApi({ accessToken })); không thể sử dụng trực tiếp như vậy vì getMeProfileApi là hàm bất đồng bộ (async function)
@@ -31,7 +32,14 @@ function EditProfileModal({ isOpen, onRequestClose }) {
         }
     }, [isOpen]);
 
-    console.log('profileData', profileData);
+    const handleUpdate = async () => {
+        try {
+            await updateUserProfileApi(userId, profileData, accessToken);
+            onRequestClose(); // Đóng modal sau khi cập nhật thành công
+        } catch (err) {
+            console.error('Lỗi khi cập nhật profile:', err);
+        }
+    };
 
     return (
         <Modal isOpen={isOpen} onRequestClose={onRequestClose} className={cx('modal')} overlayClassName={cx('overlay')}>
@@ -45,23 +53,80 @@ function EditProfileModal({ isOpen, onRequestClose }) {
             <div className={cx('modal-body')}>
                 <label>Tên*</label>
                 {profileData ? (
-                    <input type="text" placeholder="Nhập tên" value={profileData.firstName} />
+                    <input
+                        type="text"
+                        placeholder="Nhập tên"
+                        value={profileData.firstName}
+                        onChange={(e) => {
+                            setProfileData((prev) => ({
+                                ...prev,
+                                firstName: e.target.value,
+                            }));
+                        }}
+                    />
                 ) : (
-                    <input type="text" placeholder="Nhập tên" />
+                    <input
+                        type="text"
+                        placeholder="Nhập tên"
+                        onChange={(e) =>
+                            setProfileData((prev) => ({
+                                ...prev,
+                                firstName: e.target.value,
+                            }))
+                        }
+                    />
                 )}
 
                 <label>Họ*</label>
                 {profileData ? (
-                    <input type="text" placeholder="Nhập họ" value={profileData.lastName} />
+                    <input
+                        type="text"
+                        placeholder="Nhập họ"
+                        value={profileData.lastName}
+                        onChange={(e) => {
+                            setProfileData((prev) => ({
+                                ...prev,
+                                lastName: e.target.value,
+                            }));
+                        }}
+                    />
                 ) : (
-                    <input type="text" placeholder="Nhập họ" />
+                    <input
+                        type="text"
+                        placeholder="Nhập họ"
+                        onChange={(e) => {
+                            setProfileData((prev) => ({
+                                ...prev,
+                                lastName: e.target.value,
+                            }));
+                        }}
+                    />
                 )}
 
                 <label>Tiểu sử</label>
                 {profileData ? (
-                    <input type="text" placeholder="Mô tả thêm về bạn" value={profileData.bio} />
+                    <input
+                        type="text"
+                        placeholder="Mô tả thêm về bạn"
+                        value={profileData.bio}
+                        onChange={(e) => {
+                            setProfileData((prev) => ({
+                                ...prev,
+                                bio: e.target.value,
+                            }));
+                        }}
+                    />
                 ) : (
-                    <input type="text" placeholder="Mô tả thêm về bạn" />
+                    <input
+                        type="text"
+                        placeholder="Mô tả thêm về bạn"
+                        onChange={(e) => {
+                            setProfileData((prev) => ({
+                                ...prev,
+                                bio: e.target.value,
+                            }));
+                        }}
+                    />
                 )}
 
                 <label>Ngành*</label>
@@ -82,14 +147,12 @@ function EditProfileModal({ isOpen, onRequestClose }) {
 
                 <label>Thành phố</label>
                 <input type="text" placeholder="Đà Nẵng, Da Nang City" />
-
-                <div className={cx('contact')}>
-                    <a href="#">Chỉnh sửa thông tin liên hệ</a>
-                </div>
             </div>
 
             <div className={cx('modal-footer')}>
-                <button className={cx('save-btn')}>Lưu</button>
+                <button className={cx('save-btn')} onClick={handleUpdate}>
+                    Lưu
+                </button>
             </div>
         </Modal>
     );

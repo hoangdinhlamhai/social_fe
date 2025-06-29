@@ -13,8 +13,12 @@ const getMeProfileApi = async ({ accessToken }) => {
     // nếu trả về toàn bộ response, thì bỏ dòng này đi
 };
 
-const updateUserProfileApi = async (userId, data) => {
-    return axios.patch(`${BASE_URL}/api/users/${userId}`, data);
+const updateUserProfileApi = async (userId, data, accessToken) => {
+    return axios.patch(`${BASE_URL}/api/users/${userId}/profile`, data, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
+        },
+    });
 };
 
 export { updateUserProfileApi, getMeProfileApi };
