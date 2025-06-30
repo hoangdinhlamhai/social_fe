@@ -4,6 +4,7 @@ import EditProfileModal from '../EditProfileModal';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { getMeProfileApi } from '~/services/user.service';
 
 const cx = classNames.bind(styles);
 
@@ -79,7 +80,19 @@ function ProfileHeader() {
                     </div>
                 </div>
 
-                <EditProfileModal isOpen={isEditModalOpen} onRequestClose={() => setEditModalOpen(false)} />
+                <EditProfileModal
+                    isOpen={isEditModalOpen}
+                    onRequestClose={() => setEditModalOpen(false)}
+                    //onProfileUpdated={getMeProfileApi({ accessToken })} // đang truyền vào kết quả của 1 hàm, không phải hàm
+                    onProfileUpdated={async () => {
+                        try {
+                            const data = await getMeProfileApi({ accessToken });
+                            setProfileData(data); // cập nhật lại state → re-render
+                        } catch (err) {
+                            console.error('Lỗi khi cập nhật lại profile:', err);
+                        }
+                    }}
+                />
             </div>
         </div>
     );

@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 //nội dung bên ngoài modal sẽ bị ẩn khỏi trình đọc màn hình (screen readers).
 Modal.setAppElement('#root');
 
-function EditProfileModal({ isOpen, onRequestClose }) {
+function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
     const [profileData, setProfileData] = useState(null);
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
     const userId = accountLogin?.id;
@@ -32,10 +32,17 @@ function EditProfileModal({ isOpen, onRequestClose }) {
         }
     }, [isOpen]);
 
+    //React chỉ re-render component khi:
+    //State (useState) thay đổi
+    //Props (từ component cha) thay đổi
+    //Hoặc dùng một state management như Redux, Context và có update
     const handleUpdate = async () => {
         try {
             await updateUserProfileApi(userId, profileData, accessToken);
-            onRequestClose(); // Đóng modal sau khi cập nhật thành công
+            onRequestClose(); // Đóng modal
+            // nếu có truyền props onProfileUpdated thì gọi lại để reload dữ liệu
+            if (onProfileUpdated) onProfileUpdated();
+            //Khi gọi hàm onProfileUpdated(), cập nhật state ở component cha (setProfileData(res.data);) → ProfileHeader re-render
         } catch (err) {
             console.error('Lỗi khi cập nhật profile:', err);
         }
