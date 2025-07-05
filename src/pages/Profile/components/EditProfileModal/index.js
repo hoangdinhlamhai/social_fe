@@ -2,6 +2,7 @@ import Modal from 'react-modal';
 import classNames from 'classnames/bind';
 import styles from './EditProfileModal.module.scss';
 import { getMeProfileApi, updateUserProfileApi } from '~/services/user.service';
+import { getAllCountriesApi, getCitiesByCountryApi } from '~/services/location.service';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -15,7 +16,19 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
     const userId = accountLogin?.id;
 
+    const [countries, setCountries] = useState([]);
+    const [cities, setCities] = useState([]);
+
     useEffect(() => {
+        // lấy danh sách quốc gia và thành phố từ API
+        const fetchCountries = async () => {
+            try {
+                const res = await getAllCountriesApi({ accessToken });
+                setCountries(res.data);
+            } catch (err) {
+                console.error('Lỗi khi lấy quốc gia:', err);
+            }
+        };
         // setProfileData(getMeProfileApi({ accessToken })); không thể sử dụng trực tiếp như vậy vì getMeProfileApi là hàm bất đồng bộ (async function)
         // cần phải sử dụng async/await hoặc .then() để lấy dữ liệu trả về
         const fetchProfile = async () => {
@@ -28,6 +41,7 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
         };
 
         if (isOpen) {
+            fetchCountries();
             fetchProfile();
         }
     }, [isOpen]);
@@ -38,6 +52,7 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
     //Hoặc dùng một state management như Redux, Context và có update
     const handleUpdate = async () => {
         try {
+            console.log('Cập nhật profile với dữ liệu:', profileData);
             await updateUserProfileApi(userId, profileData, accessToken);
             onRequestClose(); // Đóng modal
             // nếu có truyền props onProfileUpdated thì gọi lại để reload dữ liệu
@@ -45,6 +60,25 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
             //Khi gọi hàm onProfileUpdated(), cập nhật state ở component cha (setProfileData(res.data);) → ProfileHeader re-render
         } catch (err) {
             console.error('Lỗi khi cập nhật profile:', err);
+        }
+    };
+
+    //khi người dùng chọn quốc gia, gọi API để lấy danh sách thành phố tương ứng
+    //và cập nhật state cities để hiển thị trong dropdown thành phố
+    const handleCountryChange = async (e) => {
+        const countryId = e.target.value;
+
+        setProfileData((prev) => ({
+            ...prev,
+            countryId: countryId,
+            cityId: '', // reset city khi đổi quốc gia
+        }));
+
+        try {
+            const res = await getCitiesByCountryApi({ countryId, accessToken });
+            setCities(res.data);
+        } catch (err) {
+            console.error('Lỗi khi lấy thành phố:', err);
         }
     };
 
@@ -150,10 +184,32 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
                 </div> */}
 
                 <label>Quốc gia/Khu vực*</label>
-                <input type="text" placeholder="Vietnam" />
+                <select value={profileData?.countryId || ''} onChange={handleCountryChange}>
+                    <option value="">-- Chọn quốc gia --</option>
+                    {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                            {country.name}
+                        </option>
+                    ))}
+                </select>
 
                 <label>Thành phố</label>
-                <input type="text" placeholder="Đà Nẵng, Da Nang City" />
+                <select
+                    value={profileData?.cityId || ''}
+                    onChange={(e) =>
+                        setProfileData((prev) => ({
+                            ...prev,
+                            cityId: e.target.value,
+                        }))
+                    }
+                >
+                    <option value="">-- Chọn thành phố --</option>
+                    {cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                            {city.name}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <div className={cx('modal-footer')}>

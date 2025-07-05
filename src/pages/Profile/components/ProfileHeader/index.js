@@ -68,7 +68,9 @@ function ProfileHeader() {
                             {profileData.firstName} {profileData.lastName}
                         </h2>
                         <span className={cx('title')}>{profileData.bio}</span>
-                        <div className={cx('location')}>Đà Nẵng, Da Nang City, Vietnam</div>
+                        <div className={cx('location')}>
+                            {profileData.cityName}, {profileData.countryName}
+                        </div>
                         <span className={cx('title')}>228.204 người theo dõi</span>
                     </div>
 
