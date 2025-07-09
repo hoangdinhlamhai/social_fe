@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './ProfileHeader.module.scss';
 import EditProfileModal from '../EditProfileModal';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { getMeProfileApi } from '~/services/user.service';
@@ -14,8 +14,11 @@ function ProfileHeader() {
     const [error, setError] = useState('');
 
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
-
+    const userId = accountLogin?.id;
     const email = accountLogin?.email;
+
+    const avatarInputRef = useRef(null);
+    const coverInputRef = useRef(null);
 
     //useEffect luôn chạy sau khi render, không đồng bộ với render.
     useEffect(() => {
@@ -38,6 +41,45 @@ function ProfileHeader() {
         setEditModalOpen(true);
     };
 
+    const handleImageUpload = async (e, type) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await axios.post(
+                `http://localhost:8080/api/images/${type}`, // avatar hoặc cover
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                },
+            );
+
+            // Gọi API cập nhật url avatarUrl hoặc coverUrl vào profile người dùng
+            const imageUrl = res.data;
+            await axios.patch(
+                `http://localhost:8080/api/users/${userId}/profile`,
+                type === 'avatar' ? { avatarUrl: imageUrl } : { coverPhotoUrl: imageUrl },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                },
+            );
+
+            // Load lại thông tin người dùng
+            const updated = await getMeProfileApi({ accessToken });
+            setProfileData(updated);
+        } catch (error) {
+            console.error('Lỗi upload ảnh:', error);
+        }
+    };
+
     if (!profileData) {
         return <div>Đang tải thông tin người dùng...</div>; // hoặc loader component
     }
@@ -45,7 +87,15 @@ function ProfileHeader() {
     return (
         <div className={cx('profile-header')}>
             <div className={cx('cover-photo')}>
-                <div className={cx('camera-icon')}>
+                <img src={profileData.coverPhotoUrl} alt="Cover" className={cx('cover-img')} />
+                <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    ref={coverInputRef}
+                    onChange={(e) => handleImageUpload(e, 'cover')}
+                />
+                <div className={cx('camera-icon')} onClick={() => coverInputRef.current.click()}>
                     <span role="img" aria-label="camera">
                         📷
                     </span>
@@ -53,8 +103,15 @@ function ProfileHeader() {
 
                 <div className={cx('avatar-wrapper')}>
                     <div className={cx('avatar')}>
-                        <img className={cx('avatar-image')} src="/path-to-avatar.jpg" alt="Avatar" />
-                        <div className={cx('add-icon')}>
+                        <img className={cx('avatar-image')} src={profileData.avatarUrl} alt="Avatar" />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            ref={avatarInputRef}
+                            onChange={(e) => handleImageUpload(e, 'avatar')}
+                        />
+                        <div className={cx('add-icon')} onClick={() => avatarInputRef.current.click()}>
                             <span>+</span>
                         </div>
                     </div>
@@ -65,7 +122,7 @@ function ProfileHeader() {
                 <div className={cx('info-section')}>
                     <div className={cx('main-info')}>
                         <h2 className={cx('name')}>
-                            {profileData.firstName} {profileData.lastName}
+                            {profileData.lastName} {profileData.firstName}
                         </h2>
                         <span className={cx('title')}>{profileData.bio}</span>
                         <div className={cx('location')}>
