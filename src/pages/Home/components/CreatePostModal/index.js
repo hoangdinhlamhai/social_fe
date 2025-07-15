@@ -5,9 +5,13 @@ import { FaImage } from 'react-icons/fa';
 
 const cx = classNames.bind(styles);
 
+//chỉ định phần tử gốc của ứng dụng React (thường là #root) để khi mở modal,
+//nội dung bên ngoài modal sẽ bị ẩn khỏi trình đọc màn hình (screen readers).
+Modal.setAppElement('#root');
+
 function CreatePostModal({ isOpen, onRequestClose }) {
     return (
-        <Modal isOpen={true} className={cx('postForm', 'modal')} overlayClassName={cx('overlay')}>
+        <Modal isOpen={isOpen} className={cx('postForm', 'modal')} overlayClassName={cx('overlay')}>
             <div className={cx('header')}>
                 <div className={cx('left')}>
                     <img className={cx('avatar')} src="/avatar-placeholder.png" alt="avatar" />

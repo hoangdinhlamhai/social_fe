@@ -14,7 +14,14 @@ function CreatePost() {
         <div className={cx('wrapper')}>
             <div className={cx('top')}>
                 <img className={cx('avatar')} src={avatar} alt="User Avatar" />
-                <button className={cx('startPostBtn')}>Start a post</button>
+                <button
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    className={cx('startPostBtn')}
+                >
+                    Start a post
+                </button>
             </div>
             <div className={cx('bottom')}>
                 <button className={cx('actionBtn')}>
