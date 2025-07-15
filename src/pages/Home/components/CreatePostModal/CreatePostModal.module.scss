@@ -103,13 +103,12 @@
       }
 
       .postBtn {
-        background-color: #e0e0e0;
-        color: #888;
+        background-color: var(--blue);
+        color: var(--white);
         border-radius: 20px;
         padding: 6px 16px;
         font-weight: bold;
         border: none;
-        cursor: not-allowed;
       }
     }
   }

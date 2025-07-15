@@ -4,7 +4,8 @@ import styles from './CreatePostModal.module.scss';
 import { FaImage } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { getMeProfileApi } from '~/services/user.service';
+import { createPostApi } from '~/services/post.service';
 
 const cx = classNames.bind(styles);
 
@@ -18,19 +19,26 @@ function CreatePostModal({ isOpen, onRequestClose }) {
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
 
     useEffect(() => {
-        axios
-            .get(`http://localhost:8080/api/me`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            })
-            .then((res) => {
-                setProfileData(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        const fetchProfile = async () => {
+            try {
+                const data = await getMeProfileApi({ accessToken });
+                setProfileData(data);
+            } catch (err) {
+                console.error('Lỗi khi lấy profile:', err);
+            }
+        };
+
+        fetchProfile();
     });
+
+    const handleCreatePost = async () => {
+        try {
+            await createPostApi(postData, accessToken);
+            onRequestClose(); // Đóng modal sau khi tạo bài viết thành công
+        } catch (error) {
+            console.error('Tạo bài viết thất bại:', error);
+        }
+    };
 
     if (!profileData) {
         return <div>Đang tải thông tin người dùng...</div>; // hoặc loader component
@@ -53,7 +61,16 @@ function CreatePostModal({ isOpen, onRequestClose }) {
                 </button>
             </div>
 
-            <textarea className={cx('contentInput')} placeholder="Bạn muốn nói về chủ đề gì?" />
+            <textarea
+                className={cx('contentInput')}
+                placeholder="Bạn muốn nói về chủ đề gì?"
+                onChange={(e) => {
+                    setPostData((prev) => ({
+                        ...prev,
+                        content: e.target.value,
+                    }));
+                }}
+            />
 
             <div className={cx('actions')}>
                 <div className={cx('leftIcons')}>
@@ -65,7 +82,7 @@ function CreatePostModal({ isOpen, onRequestClose }) {
                     <button className={cx('scheduleBtn')}>
                         <i className="far fa-clock"></i>
                     </button>
-                    <button className={cx('postBtn')} disabled>
+                    <button className={cx('postBtn')} onClick={handleCreatePost}>
                         Đăng bài
                     </button>
                 </div>
