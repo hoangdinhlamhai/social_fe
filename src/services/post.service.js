@@ -13,6 +13,21 @@ const getMeProfileApi = async ({ accessToken }) => {
     // nếu trả về toàn bộ response, thì bỏ dòng này đi
 };
 
+//files gửi đúng dạng multipart/form-data, không truyền trực tiếp files (kiểu mảng) mà dùng FormData.
+const uploadImageToCloudinary = async (files, accessToken) => {
+    const formData = new FormData();
+    for (const file of files) {
+        formData.append('files', file); // 'files' phải trùng @RequestParam("files")
+    }
+
+    return axios.post(`${BASE_URL}/api/images/post`, formData, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
 const createPostApi = async (data, accessToken) => {
     return axios.post(`${BASE_URL}/api/posts`, data, {
         headers: {
@@ -21,4 +36,4 @@ const createPostApi = async (data, accessToken) => {
     });
 };
 
-export { createPostApi, getMeProfileApi };
+export { createPostApi, getMeProfileApi, uploadImageToCloudinary };

@@ -2,10 +2,10 @@ import Modal from 'react-modal';
 import classNames from 'classnames/bind';
 import styles from './CreatePostModal.module.scss';
 import { FaImage } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getMeProfileApi } from '~/services/user.service';
-import { createPostApi } from '~/services/post.service';
+import { createPostApi, uploadImageToCloudinary } from '~/services/post.service';
 
 const cx = classNames.bind(styles);
 
@@ -16,7 +16,11 @@ Modal.setAppElement('#root');
 function CreatePostModal({ isOpen, onRequestClose }) {
     const [postData, setPostData] = useState(null);
     const [profileData, setProfileData] = useState(null);
-    const { accessToken, accountLogin } = useSelector((state) => state.auth);
+    const { accessToken } = useSelector((state) => state.auth);
+
+    const [selectedImages, setSelectedImages] = useState([]);
+
+    const fileInputRef = useRef();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -33,15 +37,32 @@ function CreatePostModal({ isOpen, onRequestClose }) {
 
     const handleCreatePost = async () => {
         try {
-            await createPostApi(postData, accessToken);
+            const responseData = await uploadImageToCloudinary(selectedImages, accessToken);
+            const imageUrls = responseData.data;
+
+            const newPostData = {
+                ...postData,
+                imageUrls: imageUrls,
+            };
+            await createPostApi(newPostData, accessToken);
+            console.log('Bài viết đã được tạo thành công:', newPostData);
             onRequestClose(); // Đóng modal sau khi tạo bài viết thành công
         } catch (error) {
             console.error('Tạo bài viết thất bại:', error);
         }
     };
 
+    const handleOpenFileDialog = () => {
+        fileInputRef.current.click(); // Trigger file explorer
+    };
+
+    const handleUploadImage = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedImages(files); // Lưu danh sách ảnh
+    };
+
     if (!profileData) {
-        return <div>Đang tải thông tin người dùng...</div>; // hoặc loader component
+        return <div>Đang tải thông tin người dùng...</div>;
     }
 
     return (
@@ -56,7 +77,13 @@ function CreatePostModal({ isOpen, onRequestClose }) {
                         <div className={cx('privacy')}>Đăng bài ở chế độ Bất cứ ai ▾</div>
                     </div>
                 </div>
-                <button className={cx('close-btn')} onClick={onRequestClose}>
+                <button
+                    className={cx('close-btn')}
+                    onClick={() => {
+                        onRequestClose();
+                        setSelectedImages([]); // Reset selected images when closing modal
+                    }}
+                >
                     ×
                 </button>
             </div>
@@ -72,11 +99,23 @@ function CreatePostModal({ isOpen, onRequestClose }) {
                 }}
             />
 
+            {selectedImages.map((file, index) => (
+                <img key={index} src={URL.createObjectURL(file)} alt="" width="200" height="200" />
+            ))}
+
             <div className={cx('actions')}>
                 <div className={cx('leftIcons')}>
-                    <button>
+                    <button onClick={handleOpenFileDialog}>
                         <FaImage className={cx('icon')} />
                     </button>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleUploadImage}
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                    />
                 </div>
                 <div className={cx('rightActions')}>
                     <button className={cx('scheduleBtn')}>
