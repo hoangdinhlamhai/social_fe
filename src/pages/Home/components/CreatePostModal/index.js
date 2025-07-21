@@ -33,7 +33,7 @@ function CreatePostModal({ isOpen, onRequestClose }) {
         };
 
         fetchProfile();
-    });
+    }, []);
 
     const handleCreatePost = async () => {
         try {

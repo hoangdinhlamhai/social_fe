@@ -55,8 +55,7 @@ function EditProfileModal({ isOpen, onRequestClose, onProfileUpdated }) {
             console.log('Cập nhật profile với dữ liệu:', profileData);
             await updateUserProfileApi(userId, profileData, accessToken);
             onRequestClose(); // Đóng modal
-            // nếu có truyền props onProfileUpdated thì gọi lại để reload dữ liệu
-            if (onProfileUpdated) onProfileUpdated();
+            onProfileUpdated();
             //Khi gọi hàm onProfileUpdated(), cập nhật state ở component cha (setProfileData(res.data);) → ProfileHeader re-render
         } catch (err) {
             console.error('Lỗi khi cập nhật profile:', err);

@@ -1,41 +1,35 @@
 import classNames from 'classnames/bind';
 import styles from './ProfileHeader.module.scss';
 import EditProfileModal from '../EditProfileModal';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { getMeProfileApi } from '~/services/user.service';
 
 const cx = classNames.bind(styles);
 
-function ProfileHeader() {
+function ProfileHeader({ profileData, onProfileUpdate }) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [profileData, setProfileData] = useState(null);
-    const [error, setError] = useState('');
 
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
     const userId = accountLogin?.id;
-    const email = accountLogin?.email;
 
     const avatarInputRef = useRef(null);
     const coverInputRef = useRef(null);
-
-    //useEffect luôn chạy sau khi render, không đồng bộ với render.
-    useEffect(() => {
-        axios
-            .get(`http://localhost:8080/api/users/${email}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
-                },
-            })
-            .then((res) => {
-                setProfileData(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError('Không thể tải thông tin người dùng.');
-            });
-    }, [email]); // Chỉ chạy lại khi email thay đổi
+    // useEffect(() => {
+    //     axios
+    //         .get(`http://localhost:8080/api/users/${email}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
+    //             },
+    //         })
+    //         .then((res) => {
+    //             setProfileData(res.data);
+    //         })
+    //         .catch((err) => {
+    //             console.error(err);
+    //             setError('Không thể tải thông tin người dùng.');
+    //         });
+    // }, [email]); // Chỉ chạy lại khi email thay đổi
 
     const openModal = () => {
         setEditModalOpen(true);
@@ -73,8 +67,7 @@ function ProfileHeader() {
             );
 
             // Load lại thông tin người dùng
-            const updated = await getMeProfileApi({ accessToken });
-            setProfileData(updated);
+            onProfileUpdate();
         } catch (error) {
             console.error('Lỗi upload ảnh:', error);
         }
@@ -145,8 +138,7 @@ function ProfileHeader() {
                     //onProfileUpdated={getMeProfileApi({ accessToken })} // đang truyền vào kết quả của 1 hàm, không phải hàm
                     onProfileUpdated={async () => {
                         try {
-                            const data = await getMeProfileApi({ accessToken });
-                            setProfileData(data); // cập nhật lại state → re-render
+                            onProfileUpdate(); // gọi hàm từ cha để cập nhật lại profile, cập nhật lại state → re-render
                         } catch (err) {
                             console.error('Lỗi khi cập nhật lại profile:', err);
                         }
