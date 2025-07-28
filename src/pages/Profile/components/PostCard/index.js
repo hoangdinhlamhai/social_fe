@@ -9,13 +9,15 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const cx = classNames.bind(styles);
 
-function PostCard({ author, role, time, content, image, stats }) {
+function PostCard({ author, role, time, content, image, stats, profileData }) {
     return (
         <div className={cx('post-card')}>
             <div className={cx('post-header')}>
                 <img src={ava} alt="ava" className={cx('avatar')} />
                 <div className={cx('author-info')}>
-                    <div className={cx('name')}>Hoang Dinh Lam Hai</div>
+                    <div className={cx('name')}>
+                        {profileData.lastName} {profileData.firstName}
+                    </div>
                     <div className={cx('role')}>Software Engineer</div>
                     <div className={cx('time')}>22/08</div>
                 </div>

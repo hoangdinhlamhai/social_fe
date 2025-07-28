@@ -47,7 +47,7 @@ const posts = [
     },
 ];
 
-function ProfileActivity() {
+function ProfileActivity({ profileData }) {
     const listRef = useRef();
     const [showLeft, setShowLeft] = useState(false);
     const [showRight, setShowRight] = useState(false);
@@ -85,6 +85,11 @@ function ProfileActivity() {
         };
     }, []);
 
+    // vì lần mount đầu thì useEffect không chạy ngay nên cần kiểm tra profileData
+    if (!profileData) {
+        return <div>Đang tải thông tin người dùng...</div>; // hoặc loader component
+    }
+
     return (
         <div className={cx('activity-section')}>
             <div className={cx('header')}>
@@ -110,7 +115,7 @@ function ProfileActivity() {
 
                 <div className={cx('post-list')} ref={listRef}>
                     {posts.map((post, index) => (
-                        <PostCard key={index} {...post} />
+                        <PostCard key={index} {...post} profileData={profileData} />
                     ))}
                 </div>
 
