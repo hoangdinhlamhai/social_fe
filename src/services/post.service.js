@@ -36,4 +36,12 @@ const createPostApi = async (data, accessToken) => {
     });
 };
 
-export { createPostApi, getMeProfileApi, uploadImageToCloudinary };
+const getPostByUserIdApi = async (accessToken, userId) => {
+    return axios.get(`${BASE_URL}/api/posts/${userId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByUserIdApi };

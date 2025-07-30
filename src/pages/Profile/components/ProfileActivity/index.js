@@ -3,54 +3,19 @@ import classNames from 'classnames/bind';
 import styles from './ProfileActivity.module.scss';
 import PostCard from '../PostCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getPostByUserIdApi } from '~/services/post.service';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
-
-const posts = [
-    {
-        id: 1,
-        name: 'Jenny Huynh',
-        level: 'Cấp 3+',
-        title: 'Symbolic Systems @ Stanford | Content C...',
-        time: '3 ngày',
-        text: "I got on Forbes' 30 Under 30!\nSince I was 12, making slime videos on ...",
-        image: '/images/post1.jpg',
-        reactions: '1.743',
-        comments: 83,
-        reposts: 7,
-    },
-    {
-        id: 2,
-        name: 'Jenny Huynh',
-        level: 'Cấp 3+',
-        title: 'Symbolic Systems @ Stanford | Content C...',
-        time: '1 tháng · Đã sửa',
-        text: 'I met Kamala Harris at Human X!\nJust a week before finals, I joined 3,500+ ...',
-        image: '/images/post2.jpg',
-        reactions: '1.329',
-        comments: 5,
-        reposts: 1,
-        imageCount: 9,
-    },
-    {
-        id: 3,
-        name: 'Jenny Huynh',
-        level: 'Cấp 3+',
-        title: 'Symbolic Systems @ Stanford | Content C...',
-        time: '1 tháng · Đã sửa',
-        text: 'I met Kamala Harris at Human X!\nJust a week before finals, I joined 3,500+ ...',
-        image: '/images/post2.jpg',
-        reactions: '1.329',
-        comments: 5,
-        reposts: 1,
-        imageCount: 9,
-    },
-];
 
 function ProfileActivity({ profileData }) {
     const listRef = useRef();
     const [showLeft, setShowLeft] = useState(false);
     const [showRight, setShowRight] = useState(false);
+    const [posts, setPosts] = useState([]);
+
+    const { accessToken, accountLogin } = useSelector((state) => state.auth);
+    const id = accountLogin?.id;
 
     const updateScrollButtons = () => {
         const container = listRef.current;
@@ -72,18 +37,30 @@ function ProfileActivity({ profileData }) {
     };
 
     useEffect(() => {
+        // Lấy bài đăng của người dùng từ API
+        const fetchPostsByUserId = async (accessToken, userId) => {
+            try {
+                const response = await getPostByUserIdApi(accessToken, userId);
+                setPosts(response.data);
+            } catch (error) {
+                console.error('Lỗi khi lấy profile:', error);
+            }
+        };
+
         updateScrollButtons();
         const container = listRef.current;
         if (container) {
             container.addEventListener('scroll', updateScrollButtons);
         }
 
+        fetchPostsByUserId(accessToken, id);
+
         return () => {
             if (container) {
                 container.removeEventListener('scroll', updateScrollButtons);
             }
         };
-    }, []);
+    }, [id]);
 
     // vì lần mount đầu thì useEffect không chạy ngay nên cần kiểm tra profileData
     if (!profileData) {
@@ -115,7 +92,7 @@ function ProfileActivity({ profileData }) {
 
                 <div className={cx('post-list')} ref={listRef}>
                     {posts.map((post, index) => (
-                        <PostCard key={index} {...post} profileData={profileData} />
+                        <PostCard key={index} post={post} profileData={profileData} />
                     ))}
                 </div>
 

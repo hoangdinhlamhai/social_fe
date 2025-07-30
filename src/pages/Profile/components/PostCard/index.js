@@ -9,7 +9,11 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const cx = classNames.bind(styles);
 
-function PostCard({ author, role, time, content, image, stats, profileData }) {
+function PostCard({ post, profileData }) {
+    if (!post) {
+        return <div className={cx('post-card')}>No post available</div>;
+    }
+
     return (
         <div className={cx('post-card')}>
             <div className={cx('post-header')}>
@@ -19,7 +23,7 @@ function PostCard({ author, role, time, content, image, stats, profileData }) {
                         {profileData.lastName} {profileData.firstName}
                     </div>
                     <div className={cx('role')}>Software Engineer</div>
-                    <div className={cx('time')}>22/08</div>
+                    <div className={cx('time')}>{post.createAt}</div>
                 </div>
 
                 <DropdownMenu.Root>
@@ -47,20 +51,19 @@ function PostCard({ author, role, time, content, image, stats, profileData }) {
             </div>
 
             <div className={cx('post-content')}>
-                <p>
-                    At the World IT Show 2025, South Korea’s largest ICT exhibition, FPT reaffirmed its commitment to
-                    enabling the next wave
-                </p>
+                <p>{post.content}</p>
             </div>
 
             <div className={cx('post-image')}>
-                <img src={postImg} alt="post" />
+                {post.postImages.map((image) => (
+                    <img key={image.id} src={image.url} alt="post" />
+                ))}
             </div>
 
             <div className={cx('post-stats')}>
-                <div>{stats} reactions</div>
-                <div>{stats} comments</div>
-                <div>{stats} shares</div>
+                <div>reactions</div>
+                <div>comments</div>
+                <div>shares</div>
             </div>
 
             <div className={cx('post-actions')}>
