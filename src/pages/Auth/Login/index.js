@@ -1,11 +1,14 @@
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import { FaApple, FaGoogle } from 'react-icons/fa';
+import { FaApple } from 'react-icons/fa';
 import { useState } from 'react';
 import { loginApi } from '~/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAuth } from '~/redux/slices/authSlice';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import { loginWithGoogleApi } from '~/services/auth.service';
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +18,20 @@ function Login() {
     const [error, setError] = useState('');
 
     const dispatch = useDispatch();
+
+    const handleLoginWithGoogle = async (googleData) => {
+        try {
+            const res = await loginWithGoogleApi(googleData);
+
+            // Lưu accessToken và userLogin
+            dispatch(setAuth({ accessToken: res.accessToken, accountLogin: res.accountLogin }));
+
+            navigate('/');
+        } catch (error) {
+            console.error('Google login error:', error);
+            setError('Google login failed');
+        }
+    };
 
     const handleLogin = async () => {
         try {
@@ -35,9 +52,28 @@ function Login() {
             <div className={cx('card')}>
                 <h1 className={cx('title')}>Sign in</h1>
 
-                <button className={cx('oauth-btn')}>
-                    <FaGoogle /> Continue as Hải
-                </button>
+                <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                        //Dùng jwt-decode để giải mã chuỗi JWT credential mà Google trả về
+                        const decoded = jwtDecode(credentialResponse.credential);
+                        console.log('Google user info:', decoded);
+
+                        // Gửi `decoded` lên backend để đăng nhập/đăng ký
+                        const googleData = {
+                            email: decoded.email,
+                            given_name: decoded.given_name,
+                            family_name: decoded.family_name,
+                            picture: decoded.picture,
+                        };
+
+                        handleLoginWithGoogle(googleData);
+                    }}
+                    onError={() => {
+                        console.log('Google Login Failed');
+                        setError('Google login failed');
+                    }}
+                    useOneTap // tùy chọn: hiển thị tự động nếu người dùng đã đăng nhập
+                />
 
                 <button className={cx('oauth-btn')}>
                     <FaApple /> Sign in with Apple

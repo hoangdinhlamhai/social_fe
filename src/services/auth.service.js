@@ -37,5 +37,13 @@ const logoutApi = async () => {
     localStorage.removeItem('user');
 };
 
+const loginWithGoogleApi = async (data) => {
+    const response = await axios.post(`${BASE_URL}/auth/oauth/google`, data, {
+        withCredentials: true, //backend có setCookie(refresh_token) nên frontend phải cho phép nhận cookie từ server:
+    });
+
+    return response.data;
+};
+
 //Viết code với async/await dễ đọc (thay vì .then().catch() rối rắm)
-export { loginApi, logoutApi, registerApi };
+export { loginApi, logoutApi, registerApi, loginWithGoogleApi };
