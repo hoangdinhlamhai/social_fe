@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import { FaApple } from 'react-icons/fa';
+// import { FaFacebook } from 'react-icons/fa';
 import { useState } from 'react';
 import { loginApi } from '~/services/auth.service';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { setAuth } from '~/redux/slices/authSlice';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { loginWithGoogleApi } from '~/services/auth.service';
+// import useFacebookSDK from '~/hooks/useFacebookSDK';
 
 const cx = classNames.bind(styles);
 
@@ -16,8 +17,43 @@ function Login() {
     const navigate = useNavigate();
     const [inputData, setInputData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-
     const dispatch = useDispatch();
+
+    // useFacebookSDK(); // gọi SDK khi vào Login
+
+    // const handleLoginWithFacebook = () => {
+    //     window.FB.login(
+    //         function (response) {
+    //             if (response.authResponse) {
+    //                 // Đã đăng nhập
+    //                 window.FB.api('/me', { fields: 'id,name,email,picture' }, async function (res) {
+    //                     const [firstName, ...lastNameParts] = res.name.split(' ');
+
+    //                     const facebookData = {
+    //                         email: res.email,
+    //                         given_name: firstName,
+    //                         family_name: lastNameParts.join(' '),
+    //                         picture: res.picture.data.url,
+    //                     };
+
+    //                     try {
+    //                         const response = await loginWithGoogleApi(facebookData); // reuse luôn hàm gọi Google
+    //                         dispatch(
+    //                             setAuth({ accessToken: response.accessToken, accountLogin: response.accountLogin }),
+    //                         );
+    //                         navigate('/');
+    //                     } catch (err) {
+    //                         console.error('Facebook login error:', err);
+    //                         setError('Facebook login failed');
+    //                     }
+    //                 });
+    //             } else {
+    //                 setError('Facebook login failed');
+    //             }
+    //         },
+    //         { scope: 'email,public_profile' },
+    //     );
+    // };
 
     const handleLoginWithGoogle = async (googleData) => {
         try {
@@ -75,9 +111,9 @@ function Login() {
                     useOneTap // tùy chọn: hiển thị tự động nếu người dùng đã đăng nhập
                 />
 
-                <button className={cx('oauth-btn')}>
-                    <FaApple /> Sign in with Apple
-                </button>
+                {/* <button className={cx('oauth-btn')} onClick={handleLoginWithFacebook}>
+                    <FaFacebook /> Sign in with Facebook
+                </button> */}
 
                 <div className={cx('divider')}>
                     <span>or</span>
