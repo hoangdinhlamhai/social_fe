@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoutes } from './routes';
 import { Fragment } from 'react';
 import DefaultLayout from './layouts/DefaultLayout';
+import ChatIconButton from './components/chatbot/ChatIconButton.js';
 
 function App() {
     return (
@@ -31,6 +32,8 @@ function App() {
                         );
                     })}
                 </Routes>
+
+                <ChatIconButton onClick={() => console.log('Chat button clicked!')} />
             </div>
         </Router>
     );
