@@ -3,8 +3,13 @@ import { publicRoutes } from './routes';
 import { Fragment } from 'react';
 import DefaultLayout from './layouts/DefaultLayout';
 import ChatIconButton from './components/chatbot/ChatIconButton.js';
+import ChatbotWidget from './components/chatbot/ChatbotWidget.js';
+import { useState } from 'react';
 
 function App() {
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isButtonOpen, setIsButtonOpen] = useState(true);
+
     return (
         <Router>
             <div className="App">
@@ -33,7 +38,24 @@ function App() {
                     })}
                 </Routes>
 
-                <ChatIconButton onClick={() => console.log('Chat button clicked!')} />
+                {isChatOpen && (
+                    <ChatbotWidget
+                        onclose={() => {
+                            setIsButtonOpen(true);
+                            setIsChatOpen(false);
+                        }}
+                    />
+                )}
+                {/* <ChatIconButton onClick={setIsChatOpen(true)} /> */}
+                {/* phải truyền vào 1 hàm, chứ truyền z là nó gọi luôn không đợi click, gọi => rerender => lặp vô hạn */}
+                {isButtonOpen && (
+                    <ChatIconButton
+                        onClick={() => {
+                            setIsButtonOpen(false);
+                            setIsChatOpen(true);
+                        }}
+                    />
+                )}
             </div>
         </Router>
     );
