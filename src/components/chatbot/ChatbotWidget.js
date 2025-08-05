@@ -10,6 +10,7 @@ function ChatbotWidget({ onclose }) {
     // nếu dùng arrMessage.push thì nó sẽ không rerender lại component
     const [userMessages, setUserMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const [isBotTyping, setIsBotTyping] = useState(false);
 
     const callChat = async (message) => {
         try {
@@ -29,11 +30,21 @@ function ChatbotWidget({ onclose }) {
         setUserMessages((prev) => [...prev, { text: trimmed, sender: 'user' }]);
         setInputValue('');
 
-        //Hàm dừng lại, nhường quyền xử lý cho React.
-        //React thấy rảnh → rerender lần đầu → hiển thị tin nhắn người dùng.
-        const botReply = await callChat(trimmed);
+        // Bắt đầu loading
+        setIsBotTyping(true);
 
-        setUserMessages((prev) => [...prev, { text: botReply, sender: 'bot' }]);
+        try {
+            //Hàm dừng lại, nhường quyền xử lý cho React.
+            //React thấy rảnh → rerender lần đầu → hiển thị tin nhắn người dùng.
+            const botReply = await callChat(trimmed);
+
+            // Kết thúc loading + thêm tin nhắn bot
+            setUserMessages((prev) => [...prev, { text: botReply, sender: 'bot' }]);
+        } catch (err) {
+            setUserMessages((prev) => [...prev, { text: 'Bot gặp lỗi khi phản hồi.', sender: 'bot' }]);
+        } finally {
+            setIsBotTyping(false);
+        }
     };
 
     return (
@@ -55,6 +66,11 @@ function ChatbotWidget({ onclose }) {
                             <span>{message.text}</span>
                         </div>
                     ),
+                )}
+                {isBotTyping && (
+                    <div className={cx('bot-message', 'typing-indicator')}>
+                        <span className={cx('dots')}></span>
+                    </div>
                 )}
             </div>
             <div className={cx('chat-input')}>
