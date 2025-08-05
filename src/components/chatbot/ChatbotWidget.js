@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 function ChatbotWidget({ onclose }) {
     // const arrMessage = [] nên dùng useState để khi gọi setMessages thì nó sẽ rerender lại component
     // nếu dùng arrMessage.push thì nó sẽ không rerender lại component
-    const [messages, setMessages] = useState([]);
+    const [userMessages, setUserMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
     const callChat = async (message) => {
@@ -25,14 +25,14 @@ function ChatbotWidget({ onclose }) {
         const trimmed = inputValue.trim();
         if (!trimmed) return;
 
-        setMessages((prev) => {
+        setUserMessages((prev) => {
             return [...prev, { text: trimmed, sender: 'user' }];
         });
         setInputValue('');
 
         // Gọi chatbot trước
         const botReply = callChat(trimmed);
-        setMessages((prev) => {
+        setUserMessages((prev) => {
             return [...prev, { text: botReply, sender: 'bot' }];
         });
     };
@@ -46,11 +46,17 @@ function ChatbotWidget({ onclose }) {
                 </button>
             </div>
             <div className={cx('chat-body')}>
-                {messages.map((message, index) => (
-                    <div key={index} className={cx('message-user')}>
-                        {message.text}
-                    </div>
-                ))}
+                {userMessages.map((message, index) =>
+                    message.sender === 'user' ? (
+                        <div key={index} className={cx('user-message')}>
+                            <span>{message.text}</span>
+                        </div>
+                    ) : (
+                        <div key={index} className={cx('bot-message')}>
+                            <span>{message.text}</span>
+                        </div>
+                    ),
+                )}
             </div>
             <div className={cx('chat-input')}>
                 <input

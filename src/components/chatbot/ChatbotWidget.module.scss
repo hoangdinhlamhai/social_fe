@@ -22,25 +22,39 @@
 }
 
 .chat-body {
+  display: flex;
+  flex-direction: column;
+  //thêm 2 cái trên để dùng align-self: flex-end;
   padding: 10px;
   flex: 1;
   overflow-y: auto;
   background: #f5f5f5;
 }
 
-.chat-msg {
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.message-user {
-  text-align: right;
+.user-message {
+  display: inline-block;
+  max-width: 85%;
+  background-color: #e6f0ff; 
   color: #007bff;
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 16px;
+  text-align: left;
+  align-self: flex-end; /* nếu dùng flexbox */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.chat-msg.bot {
-  text-align: left;
+.bot-message {
+  display: inline-block;
+  max-width: 85%;
+  background-color: #f1f1f1;
   color: #333;
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 16px;
+  text-align: left;
+  align-self: flex-start;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chat-input {
