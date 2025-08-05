@@ -2,6 +2,7 @@ import styles from './ChatbotWidget.module.scss';
 import classNames from 'classnames/bind';
 import { useState } from 'react';
 import { getChatbotResponseApi } from '~/services/chatbot.service';
+import { FaMicrophone } from 'react-icons/fa';
 
 const cx = classNames.bind(styles);
 
@@ -47,6 +48,35 @@ function ChatbotWidget({ onclose }) {
         }
     };
 
+    const handleVoiceInput = () => {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Trình duyệt không hỗ trợ tính năng ghi âm.');
+            return;
+        }
+
+        const recognition = new window.webkitSpeechRecognition();
+        recognition.lang = 'vi-VN'; // Hỗ trợ tiếng Việt
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+            console.log('🎙️ Đang nghe...');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log('Kết quả:', transcript);
+            setInputValue(transcript); // Đưa vào ô input
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Lỗi khi nhận giọng nói:', event.error);
+            alert('Lỗi khi nhận giọng nói: ' + event.error);
+        };
+
+        recognition.start();
+    };
+
     return (
         <div className={cx('chat-widget')}>
             <div className={cx('chat-header')}>
@@ -84,6 +114,9 @@ function ChatbotWidget({ onclose }) {
                         }
                     }}
                 />
+                <button onClick={handleVoiceInput}>
+                    <FaMicrophone />
+                </button>
                 <button
                     onClick={() => {
                         handleSendMessage();
