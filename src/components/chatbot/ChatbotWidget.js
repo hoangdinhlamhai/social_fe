@@ -21,20 +21,19 @@ function ChatbotWidget({ onclose }) {
         }
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         const trimmed = inputValue.trim();
         if (!trimmed) return;
 
-        setUserMessages((prev) => {
-            return [...prev, { text: trimmed, sender: 'user' }];
-        });
+        //Lúc này, React lên lịch rerender, nhưng chưa làm ngay. Nó đợi hàm JS hiện tại (handleSendMessage) hoàn tất hoặc await xuất hiện.
+        setUserMessages((prev) => [...prev, { text: trimmed, sender: 'user' }]);
         setInputValue('');
 
-        // Gọi chatbot trước
-        const botReply = callChat(trimmed);
-        setUserMessages((prev) => {
-            return [...prev, { text: botReply, sender: 'bot' }];
-        });
+        //Hàm dừng lại, nhường quyền xử lý cho React.
+        //React thấy rảnh → rerender lần đầu → hiển thị tin nhắn người dùng.
+        const botReply = await callChat(trimmed);
+
+        setUserMessages((prev) => [...prev, { text: botReply, sender: 'bot' }]);
     };
 
     return (
@@ -63,8 +62,19 @@ function ChatbotWidget({ onclose }) {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Nhập tin nhắn..."
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSendMessage();
+                        }
+                    }}
                 />
-                <button onClick={handleSendMessage}>Gửi</button>
+                <button
+                    onClick={() => {
+                        handleSendMessage();
+                    }}
+                >
+                    Gửi
+                </button>
             </div>
         </div>
     );
