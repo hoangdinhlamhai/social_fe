@@ -37,7 +37,7 @@ const createPostApi = async (data, accessToken) => {
 };
 
 const getPostByUserIdApi = async (accessToken, userId) => {
-    return axios.get(`${BASE_URL}/api/posts/${userId}`, {
+    return await axios.get(`${BASE_URL}/api/posts/${userId}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
