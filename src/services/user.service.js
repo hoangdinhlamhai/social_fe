@@ -14,7 +14,7 @@ const getMeProfileApi = async ({ accessToken }) => {
 };
 
 const updateUserProfileApi = async (userId, data, accessToken) => {
-    return axios.patch(`${BASE_URL}/api/users/${userId}/profile`, data, {
+    return await axios.patch(`${BASE_URL}/api/users/${userId}/profile`, data, {
         headers: {
             Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
         },

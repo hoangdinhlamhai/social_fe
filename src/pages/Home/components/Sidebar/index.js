@@ -5,10 +5,11 @@ import SidebarMenu from './SidebarMenu';
 
 const cx = classNames.bind(styles);
 
-function Sidebar() {
+//không có {} thì sẽ lấy toàn bộ object { profileData: { name: 'Nam' } }
+function Sidebar({ profileData }) {
     return (
         <div className={cx('sidebar')}>
-            <SidebarProfile />
+            <SidebarProfile profileData={profileData} />
             <SidebarMenu />
         </div>
     );

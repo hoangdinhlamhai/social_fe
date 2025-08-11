@@ -9,6 +9,10 @@ import SortBar from '~/pages/Home/components/SortBar';
 import PostList from '~/pages/Home/components/PostList';
 import RightSidebar from '~/pages/Home/components/RightSidebar';
 
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { getMeProfileApi } from '~/services/user.service';
+
 const cx = classNames.bind(styles);
 
 const newsList = [
@@ -32,9 +36,25 @@ const posts = [
 ];
 
 function Home() {
+    const { accessToken } = useSelector((state) => state.auth);
+    const [profileData, setProfileData] = useState(null);
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const response = await getMeProfileApi({ accessToken });
+                setProfileData(response);
+                console.log('Profile data fetched:', response);
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+        fetchProfileData();
+    }, [accessToken]);
+
     return (
         <>
-            <Sidebar />
+            <Sidebar profileData={profileData} />
             <div className={cx('content')}>
                 <CreatePost />
                 <SortBar />
