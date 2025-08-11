@@ -5,6 +5,10 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { logoutApi } from '~/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getMeProfileApi } from '~/services/user.service';
+
 const cx = classNames.bind(styles);
 
 const navItems = [
@@ -18,10 +22,30 @@ const navItems = [
 function Header() {
     const navigate = useNavigate();
 
+    const { accessToken } = useSelector((state) => state.auth);
+    const [profileData, setProfileData] = useState(null);
+
     const handleLogout = async () => {
         await logoutApi();
         navigate('/login');
     };
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const response = await getMeProfileApi({ accessToken });
+                setProfileData(response);
+                console.log('Profile data fetched:', response);
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+        fetchProfileData();
+    }, [accessToken]);
+
+    if (!profileData) {
+        return <div className={cx('loading')}>Loading...</div>;
+    }
 
     return (
         <header className={cx('header')}>
@@ -63,10 +87,16 @@ function Header() {
                         <DropdownMenu.Content side="bottom" align="end" sideOffset={8} className={cx('meDropdown')}>
                             <div className={cx('profile')}>
                                 <div className={cx('infoWrapper')}>
-                                    <div className={cx('avatar')} />
+                                    <img
+                                        className={cx('avatar')}
+                                        src={`${profileData.avatarUrl}?sz=200`}
+                                        alt="User Avatar"
+                                    />
                                     <div className={cx('info')}>
-                                        <p className={cx('name')}>Lâm Hải Hoàng Đình</p>
-                                        <span className={cx('title')}>heri</span>
+                                        <p className={cx('name')}>
+                                            {profileData.firstName} {profileData.lastName}
+                                        </p>
+                                        <span className={cx('title')}>{profileData.bio}</span>
                                     </div>
                                 </div>
                                 <button className={cx('viewProfile')}>Xem hồ sơ</button>
@@ -80,16 +110,12 @@ function Header() {
                                 <DropdownMenu.Item className={cx('menuItem')}>
                                     Cài đặt và quyền riêng tư
                                 </DropdownMenu.Item>
-                                <DropdownMenu.Item className={cx('menuItem')}>Trợ giúp</DropdownMenu.Item>
                                 <DropdownMenu.Item className={cx('menuItem')}>Ngôn ngữ</DropdownMenu.Item>
                             </div>
 
                             <div className={cx('section')}>
                                 <p className={cx('sectionTitle')}>Quản lý</p>
                                 <DropdownMenu.Item className={cx('menuItem')}>Bài đăng và hoạt động</DropdownMenu.Item>
-                                <DropdownMenu.Item className={cx('menuItem')}>
-                                    Tài khoản đăng tin tuyển dụng
-                                </DropdownMenu.Item>
                             </div>
 
                             <DropdownMenu.Item className={cx('menuItem', 'btnLogout')} onClick={handleLogout}>

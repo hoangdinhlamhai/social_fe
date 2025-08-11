@@ -2,9 +2,8 @@ import Modal from 'react-modal';
 import classNames from 'classnames/bind';
 import styles from './CreatePostModal.module.scss';
 import { FaImage } from 'react-icons/fa';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { getMeProfileApi } from '~/services/user.service';
 import { createPostApi, uploadImageToCloudinary } from '~/services/post.service';
 
 const cx = classNames.bind(styles);
