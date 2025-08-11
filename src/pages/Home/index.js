@@ -56,7 +56,7 @@ function Home() {
         <>
             <Sidebar profileData={profileData} />
             <div className={cx('content')}>
-                <CreatePost />
+                <CreatePost profileData={profileData} />
                 <SortBar />
                 <PostList posts={posts} />
             </div>

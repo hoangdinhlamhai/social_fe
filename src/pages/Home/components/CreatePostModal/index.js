@@ -13,27 +13,13 @@ const cx = classNames.bind(styles);
 //nội dung bên ngoài modal sẽ bị ẩn khỏi trình đọc màn hình (screen readers).
 Modal.setAppElement('#root');
 
-function CreatePostModal({ isOpen, onRequestClose }) {
+function CreatePostModal({ isOpen, onRequestClose, profileData }) {
     const [postData, setPostData] = useState(null);
-    const [profileData, setProfileData] = useState(null);
     const { accessToken } = useSelector((state) => state.auth);
 
     const [selectedImages, setSelectedImages] = useState([]);
 
     const fileInputRef = useRef();
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const data = await getMeProfileApi({ accessToken });
-                setProfileData(data);
-            } catch (err) {
-                console.error('Lỗi khi lấy profile:', err);
-            }
-        };
-
-        fetchProfile();
-    }, []);
 
     const handleCreatePost = async () => {
         try {
@@ -69,7 +55,7 @@ function CreatePostModal({ isOpen, onRequestClose }) {
         <Modal isOpen={isOpen} className={cx('postForm', 'modal')} overlayClassName={cx('overlay')}>
             <div className={cx('header')}>
                 <div className={cx('left')}>
-                    <img className={cx('avatar')} src={profileData.avatarUrl} alt="avatar" />
+                    <img className={cx('avatar')} src={`${profileData.avatarUrl}?sz=200`} alt="avatar" />
                     <div className={cx('userInfo')}>
                         <div className={cx('name')}>
                             {profileData.lastName} {profileData.firstName}

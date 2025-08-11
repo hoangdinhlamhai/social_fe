@@ -1,19 +1,22 @@
 import { FaVideo, FaImage, FaRegNewspaper } from 'react-icons/fa';
 import classNames from 'classnames/bind';
 import styles from './CreatePost.module.scss';
-import avatar from '~/assets/images/bld.jpeg';
 import CreatePostModal from '../CreatePostModal';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function CreatePost() {
+function CreatePost({ profileData }) {
     const [isOpen, setIsOpen] = useState(false);
+
+    if (!profileData) {
+        return <div className={cx('loading')}>Loading...</div>;
+    }
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('top')}>
-                <img className={cx('avatar')} src={avatar} alt="User Avatar" />
+                <img className={cx('avatar')} src={`${profileData.avatarUrl}?sz=200`} alt="User Avatar" />
                 <button
                     onClick={() => {
                         setIsOpen(true);
@@ -38,7 +41,7 @@ function CreatePost() {
                 </button>
             </div>
 
-            <CreatePostModal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} />
+            <CreatePostModal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} profileData={profileData} />
         </div>
     );
 }
