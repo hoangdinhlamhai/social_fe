@@ -5,6 +5,7 @@ import Profile from '~/pages/Profile';
 import Login from '~/pages/Auth/Login';
 import Register from '~/pages/Auth/Register';
 import Post from '~/pages/Post';
+import Network from '~/pages/Network';
 
 //khong can dang nhap cung access duoc
 const publicRoutes = [
@@ -13,6 +14,7 @@ const publicRoutes = [
     { path: config.routes.login, component: Login },
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.post, component: Post },
+    { path: config.routes.network, component: Network },
 ];
 
 //yeu cau dang nhap moi access duoc

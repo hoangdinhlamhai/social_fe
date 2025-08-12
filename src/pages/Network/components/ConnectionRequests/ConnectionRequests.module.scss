@@ -1,0 +1,94 @@
+.requests-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 0 0 1px rgba(140, 140, 140, 0.2);
+  width: 100%;
+  margin-bottom: 12px;
+
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .empty {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+  }
+
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        margin-right: 12px;
+        flex-shrink: 0;
+      }
+
+      .info {
+        flex: 1;
+
+        .name {
+          font-size: 14px;
+          font-weight: 600;
+          margin: 0 0 4px 0;
+        }
+
+        .title-job {
+          font-size: 13px;
+          color: rgba(0, 0, 0, 0.6);
+          margin: 0 0 8px 0;
+        }
+
+        .actions {
+          display: flex;
+          gap: 8px;
+
+          .accept {
+            background-color: #0a66c2;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 14px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #004182;
+            }
+          }
+
+          .ignore {
+            background-color: transparent;
+            color: #666;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 14px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.05);
+            }
+          }
+        }
+      }
+    }
+  }
+}

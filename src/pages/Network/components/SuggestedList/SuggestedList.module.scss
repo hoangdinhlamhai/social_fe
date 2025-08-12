@@ -1,0 +1,36 @@
+.list-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 0 0 1px rgba(140, 140, 140, 0.2);
+  width: 100%;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    a {
+      font-size: 14px;
+      color: #0a66c2;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
