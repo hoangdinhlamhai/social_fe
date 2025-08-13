@@ -149,13 +149,14 @@
 }
 
 .viewProfile {
-  padding: 6px 12px;
+  padding: 2px 12px;
   border: 1px solid #0073b1;
   border-radius: 16px;
-  color: #0073b1;
+  color: #0073b1 !important;
   font-weight: 500;
   background-color: transparent;
   cursor: pointer;
+  text-align: center;
 
   &:hover {
     background-color: rgba(0, 115, 177, 0.1);

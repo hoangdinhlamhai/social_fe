@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import { Home, Users, Briefcase, MessageSquare, Bell, User, Search, ChevronDown } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { logoutApi } from '~/services/auth.service';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,10 +12,10 @@ import { getMeProfileApi } from '~/services/user.service';
 const cx = classNames.bind(styles);
 
 const navItems = [
-    { icon: <Home size={20} />, label: 'Home' },
-    { icon: <Users size={20} />, label: 'My Network' },
+    { icon: <Home size={20} />, label: 'Home', link: '/' },
+    { icon: <Users size={20} />, label: 'My Network', link: '/network' },
     { icon: <Briefcase size={20} />, label: 'Jobs' },
-    { icon: <MessageSquare size={20} />, label: 'Messaging' },
+    { icon: <MessageSquare size={20} />, label: 'Messaging', link: '/messages' },
     { icon: <Bell size={20} />, label: 'Notifications' },
 ];
 
@@ -68,10 +68,10 @@ function Header() {
 
                 <nav className={cx('right')}>
                     {navItems.map((item, idx) => (
-                        <div key={idx} className={cx('navItem')}>
+                        <Link to={item.link} key={idx} className={cx('navItem')}>
                             {item.icon}
                             <span>{item.label}</span>
-                        </div>
+                        </Link>
                     ))}
 
                     <DropdownMenu.Root>
@@ -99,7 +99,10 @@ function Header() {
                                         <span className={cx('title')}>{profileData.bio}</span>
                                     </div>
                                 </div>
-                                <button className={cx('viewProfile')}>Xem hồ sơ</button>
+
+                                <Link to="/profile" className={cx('viewProfile')}>
+                                    Xem hồ sơ
+                                </Link>
                             </div>
 
                             <div className={cx('section')}>
