@@ -16,9 +16,19 @@ const getMeProfileApi = async ({ accessToken }) => {
 const updateUserProfileApi = async (userId, data, accessToken) => {
     return await axios.patch(`${BASE_URL}/api/users/${userId}/profile`, data, {
         headers: {
-            Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
+            Authorization: `Bearer ${accessToken}`,
         },
     });
 };
 
-export { updateUserProfileApi, getMeProfileApi };
+const getAllUsersApi = async (accessToken) => {
+    const response = await axios.get(`${BASE_URL}/api/users`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    return response.data;
+};
+
+export { updateUserProfileApi, getMeProfileApi, getAllUsersApi };
