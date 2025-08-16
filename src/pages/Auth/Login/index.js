@@ -3,7 +3,7 @@ import styles from './Login.module.scss';
 // import { FaFacebook } from 'react-icons/fa';
 import { useState } from 'react';
 import { loginApi } from '~/services/auth.service';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAuth } from '~/redux/slices/authSlice';
 import { GoogleLogin } from '@react-oauth/google';
@@ -121,7 +121,7 @@ function Login() {
 
                 <input
                     className={cx('input')}
-                    placeholder="Email or phone"
+                    placeholder="Enter your email"
                     value={inputData.email}
                     onChange={(e) =>
                         setInputData((prev) => ({
@@ -146,16 +146,16 @@ function Login() {
                     <button className={cx('show-btn')}>Show</button>
                 </div>
 
-                <a href="#" className={cx('forgot-password')}>
+                <Link to="/forgot-password" className={cx('forgot-password')}>
                     Forgot password?
-                </a>
+                </Link>
 
                 <button className={cx('sign-in-btn')} onClick={handleLogin}>
                     Sign in
                 </button>
 
                 <div className={cx('join-now')}>
-                    New to LinkedIn? <a href="#">Join now</a>
+                    New to LinkedIn? <Link to="/register">Join now</Link>
                 </div>
             </div>
 

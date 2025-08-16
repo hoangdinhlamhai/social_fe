@@ -5,6 +5,8 @@ const routes = {
     register: '/register',
     post: '/post',
     network: '/network',
+    forgotPassword: '/forgot-password',
+    verifyOtp: '/verify-otp',
 };
 
 export default routes;
