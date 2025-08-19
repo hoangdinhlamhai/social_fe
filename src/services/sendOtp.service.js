@@ -10,10 +10,17 @@ const checkEmailExistsApi = async (email) => {
 };
 
 const sendOtpApi = async (email) => {
-    const res = await axios.get(`${BASE_URL}/check-email`, {
+    const res = await axios.get(`${BASE_URL}/send-otp`, {
         params: { email },
     });
     return res.data;
 };
 
-export { checkEmailExistsApi, sendOtpApi };
+const verifyOtpApi = async (email, otp) => {
+    const res = await axios.get(`${BASE_URL}/verify-otp`, {
+        params: { email, otp },
+    });
+    return res.data;
+};
+
+export { checkEmailExistsApi, sendOtpApi, verifyOtpApi };

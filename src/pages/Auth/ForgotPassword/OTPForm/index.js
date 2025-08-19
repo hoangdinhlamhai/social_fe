@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './OTPForm.module.scss';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { sendOtpApi } from '~/services/sendOtp.service';
 
 const cx = classNames.bind(styles);
 
@@ -12,7 +12,6 @@ function OTPForm() {
     const [timeLeft, setTimeLeft] = useState(60);
     const [disabled, setDisabled] = useState(true);
     const [error, setError] = useState('');
-    const dispatch = useDispatch();
 
     const handleVerify = async () => {
         try {
@@ -21,6 +20,13 @@ function OTPForm() {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');
         }
+    };
+
+    const handleResendOTP = async () => {
+        const email = localStorage.getItem('email');
+        await sendOtpApi(email);
+        setTimeLeft(60);
+        setDisabled(true);
     };
 
     //setInterval nhận callback function
@@ -55,7 +61,7 @@ function OTPForm() {
                     Verify
                 </button>
 
-                <button className={cx('resend-btn')} disabled={disabled}>
+                <button className={cx('resend-btn')} disabled={disabled} onClick={handleResendOTP}>
                     {disabled ? `Resend OTP in ${timeLeft}s` : 'Click to resend OTP'}
                 </button>
 

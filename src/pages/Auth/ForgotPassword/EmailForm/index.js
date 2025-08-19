@@ -3,7 +3,6 @@ import styles from './EmailForm.module.scss';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setAuth } from '~/redux/slices/authSlice';
 import { checkEmailExistsApi, sendOtpApi } from '~/services/sendOtp.service';
 
 const cx = classNames.bind(styles);
@@ -12,7 +11,6 @@ function EmailForm() {
     const navigate = useNavigate();
     const [inputData, setInputData] = useState('');
     const [error, setError] = useState('');
-    const dispatch = useDispatch();
 
     const handleSendOTP = async () => {
         try {
@@ -21,6 +19,7 @@ function EmailForm() {
             if (!emailExists) {
                 setError('Email does not exist!');
             } else {
+                localStorage.setItem('email', inputData);
                 await sendOtpApi(inputData);
                 navigate('/verify-otp');
             }

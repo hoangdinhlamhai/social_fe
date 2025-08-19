@@ -6,6 +6,7 @@ import Login from '~/pages/Auth/Login';
 import Register from '~/pages/Auth/Register';
 import EmailForm from '~/pages/Auth/ForgotPassword/EmailForm';
 import OTPForm from '~/pages/Auth/ForgotPassword/OTPForm';
+import NewPasswordForm from '~/pages/Auth/ForgotPassword/NewPasswordForm';
 import Post from '~/pages/Post';
 import Network from '~/pages/Network';
 
@@ -19,6 +20,7 @@ const publicRoutes = [
     { path: config.routes.network, component: Network },
     { path: config.routes.forgotPassword, component: EmailForm, layout: null },
     { path: config.routes.verifyOtp, component: OTPForm, layout: null },
+    { path: config.routes.newPassword, component: NewPasswordForm, layout: null },
 ];
 
 //yeu cau dang nhap moi access duoc

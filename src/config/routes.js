@@ -7,6 +7,7 @@ const routes = {
     network: '/network',
     forgotPassword: '/forgot-password',
     verifyOtp: '/verify-otp',
+    newPassword: '/new-password',
 };
 
 export default routes;
