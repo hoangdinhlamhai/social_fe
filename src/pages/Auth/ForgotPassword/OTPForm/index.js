@@ -1,35 +1,43 @@
 import classNames from 'classnames/bind';
 import styles from './OTPForm.module.scss';
-import { useState } from 'react';
-import { loginApi } from '~/services/auth.service';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setAuth } from '~/redux/slices/authSlice';
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
-import { loginWithGoogleApi } from '~/services/auth.service';
 
 const cx = classNames.bind(styles);
 
 function OTPForm() {
     const navigate = useNavigate();
-    const [inputData, setInputData] = useState({ email: '', password: '' });
+    const [otp, setOtp] = useState('');
+    const [timeLeft, setTimeLeft] = useState(60);
+    const [disabled, setDisabled] = useState(true);
     const [error, setError] = useState('');
     const dispatch = useDispatch();
 
-    const handleLogin = async () => {
+    const handleVerify = async () => {
         try {
-            const res = await loginApi(inputData.email, inputData.password);
-
-            // Lưu accessToken và userLogin
-            dispatch(setAuth({ accessToken: res.accessToken, accountLogin: res.accountLogin }));
-
             navigate('/');
         } catch (err) {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');
         }
     };
+
+    //setInterval nhận callback function
+    useEffect(() => {
+        let timer = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+        }, 1000);
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            setDisabled(false);
+        }
+
+        return () => {
+            clearInterval(timer); // cleanup khi unmount
+        };
+    }, [timeLeft]);
 
     return (
         <div className={cx('container')}>
@@ -39,21 +47,20 @@ function OTPForm() {
                 <input
                     className={cx('input')}
                     placeholder="Enter OTP"
-                    value={inputData.email}
-                    onChange={(e) =>
-                        setInputData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                        }))
-                    }
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
                 />
 
-                <button className={cx('send-btn')} onClick={handleLogin}>
+                <button className={cx('send-btn')} onClick={handleVerify}>
                     Verify
                 </button>
 
+                <button className={cx('resend-btn')} disabled={disabled}>
+                    {disabled ? `Resend OTP in ${timeLeft}s` : 'Click to resend OTP'}
+                </button>
+
                 <Link className={cx('join-now')} to="/forgot-password">
-                    Back or Resend OTP in 60 seconds
+                    Back
                 </Link>
             </div>
 

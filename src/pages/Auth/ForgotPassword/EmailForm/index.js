@@ -1,25 +1,29 @@
 import classNames from 'classnames/bind';
 import styles from './EmailForm.module.scss';
 import { useState } from 'react';
-import { loginApi } from '~/services/auth.service';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAuth } from '~/redux/slices/authSlice';
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
-import { loginWithGoogleApi } from '~/services/auth.service';
+import { checkEmailExistsApi, sendOtpApi } from '~/services/sendOtp.service';
 
 const cx = classNames.bind(styles);
 
 function EmailForm() {
     const navigate = useNavigate();
-    const [inputData, setInputData] = useState({ email: '', password: '' });
+    const [inputData, setInputData] = useState('');
     const [error, setError] = useState('');
     const dispatch = useDispatch();
 
-    const handleLogin = async () => {
+    const handleSendOTP = async () => {
         try {
-            navigate('/verify-otp');
+            const emailExists = await checkEmailExistsApi(inputData);
+
+            if (!emailExists) {
+                setError('Email does not exist!');
+            } else {
+                await sendOtpApi(inputData);
+                navigate('/verify-otp');
+            }
         } catch (err) {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');
@@ -34,16 +38,13 @@ function EmailForm() {
                 <input
                     className={cx('input')}
                     placeholder="Enter your email"
-                    value={inputData.email}
-                    onChange={(e) =>
-                        setInputData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                        }))
-                    }
+                    value={inputData}
+                    onChange={(e) => setInputData(e.target.value)}
                 />
 
-                <button className={cx('send-btn')} onClick={handleLogin}>
+                {error && <p className={cx('error')}>{error}</p>}
+
+                <button className={cx('send-btn')} onClick={handleSendOTP}>
                     Send OTP
                 </button>
 
