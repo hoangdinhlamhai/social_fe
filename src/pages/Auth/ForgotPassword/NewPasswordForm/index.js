@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './NewPasswordForm.module.scss';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { changePasswordApi } from '~/services/sendOtp.service';
 
 const cx = classNames.bind(styles);
 
@@ -12,7 +13,8 @@ function NewPasswordForm() {
 
     const handleChangePassword = async () => {
         try {
-            navigate('/');
+            await changePasswordApi(localStorage.getItem('email'), newPassword);
+            navigate('/login');
         } catch (err) {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');

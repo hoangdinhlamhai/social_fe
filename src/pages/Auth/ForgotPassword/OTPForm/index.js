@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './OTPForm.module.scss';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { sendOtpApi } from '~/services/sendOtp.service';
+import { sendOtpApi, verifyOtpApi } from '~/services/sendOtp.service';
 
 const cx = classNames.bind(styles);
 
@@ -15,7 +15,13 @@ function OTPForm() {
 
     const handleVerify = async () => {
         try {
-            navigate('/');
+            const email = localStorage.getItem('email');
+            const response = await verifyOtpApi(email, otp);
+            if (response) {
+                navigate('/new-password');
+            } else {
+                setError('Invalid OTP!');
+            }
         } catch (err) {
             console.log('Lỗi khi login:', err);
             setError(err.response?.data?.message || 'Login failed!');
@@ -56,6 +62,8 @@ function OTPForm() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                 />
+
+                {error && <p className={cx('error')}>{error}</p>}
 
                 <button className={cx('send-btn')} onClick={handleVerify}>
                     Verify

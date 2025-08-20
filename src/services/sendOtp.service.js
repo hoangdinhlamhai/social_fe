@@ -23,4 +23,17 @@ const verifyOtpApi = async (email, otp) => {
     return res.data;
 };
 
-export { checkEmailExistsApi, sendOtpApi, verifyOtpApi };
+const changePasswordApi = async (email, newPassword) => {
+    //tạo 1 đối tượng requestBody chứa mật khẩu mới đúng định dạng yêu cầu của API (application/json)
+    //nếu truyền thẳng newPassword vào thì là kiểu text/plain
+    const requestBody = {
+        password: newPassword,
+    };
+
+    const res = await axios.post(`${BASE_URL}/change-password`, requestBody, {
+        params: { email },
+    });
+    return res.data;
+};
+
+export { checkEmailExistsApi, sendOtpApi, verifyOtpApi, changePasswordApi };
