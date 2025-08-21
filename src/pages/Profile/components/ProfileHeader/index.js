@@ -15,21 +15,6 @@ function ProfileHeader({ profileData, onProfileUpdate }) {
 
     const avatarInputRef = useRef(null);
     const coverInputRef = useRef(null);
-    // useEffect(() => {
-    //     axios
-    //         .get(`http://localhost:8080/api/users/${email}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
-    //             },
-    //         })
-    //         .then((res) => {
-    //             setProfileData(res.data);
-    //         })
-    //         .catch((err) => {
-    //             console.error(err);
-    //             setError('Không thể tải thông tin người dùng.');
-    //         });
-    // }, [email]); // Chỉ chạy lại khi email thay đổi
 
     const openModal = () => {
         setEditModalOpen(true);

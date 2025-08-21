@@ -8,10 +8,10 @@ import ProfileExperience from './components/ProfileExperience';
 import ProfileEducation from './components/ProfileEducation';
 import ProfileSkill from './components/ProfileSkill';
 
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getMeProfileApi } from '~/services/user.service';
-import axios from 'axios';
+import { getMeProfileApi, getUserProfileApi } from '~/services/user.service';
 
 const cx = classNames.bind(styles);
 
@@ -19,21 +19,23 @@ function Profile() {
     const [profileData, setProfileData] = useState(null);
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
     const email = accountLogin?.email;
+    const { email: emailFromParams } = useParams();
 
     useEffect(() => {
-        axios
-            .get(`http://localhost:8080/api/users/${email}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // thêm JWT vào header Authorization
-                },
-            })
-            .then((res) => {
-                setProfileData(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, [email]);
+        const fetchProfileData = async () => {
+            try {
+                const response = await getUserProfileApi(accessToken, emailFromParams);
+                setProfileData(response);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchProfileData();
+    }, [emailFromParams, accessToken]);
+
+    if (!profileData) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className={cx('profile-page')}>

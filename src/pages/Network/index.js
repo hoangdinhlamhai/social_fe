@@ -21,6 +21,7 @@ function Network() {
             try {
                 const users = await getAllUsersApi(accessToken);
                 setAllUsersData(users);
+                console.log('All users data:', users);
             } catch (error) {
                 console.error('Error fetching all users:', error);
             }
