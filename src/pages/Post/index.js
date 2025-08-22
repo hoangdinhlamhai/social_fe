@@ -4,7 +4,7 @@ import Sidebar from '~/pages/Post/components/Sidebar';
 import PostList from '~/pages/Post/components/PostList';
 import RightSidebar from '~/pages/Post/components/RightSidebar';
 import styles from './Post.module.scss';
-import { getPostByUserIdApi } from '~/services/post.service';
+import { getPostByEmailApi } from '~/services/post.service';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -27,7 +27,7 @@ function Post() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await getPostByUserIdApi(accessToken, userId);
+                const response = await getPostByEmailApi(accessToken, userId);
                 setPosts(response.data);
             } catch (error) {
                 console.error('Lỗi khi lấy bài đăng:', error);

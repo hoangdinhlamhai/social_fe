@@ -36,12 +36,15 @@ const createPostApi = async (data, accessToken) => {
     });
 };
 
-const getPostByUserIdApi = async (accessToken, userId) => {
-    return await axios.get(`${BASE_URL}/api/posts/${userId}`, {
+const getPostByEmailApi = async (accessToken, email) => {
+    return await axios.get(`${BASE_URL}/api/posts`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+            email: email,
         },
     });
 };
 
-export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByUserIdApi };
+export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByEmailApi };

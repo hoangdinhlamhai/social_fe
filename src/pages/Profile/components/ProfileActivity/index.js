@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './ProfileActivity.module.scss';
 import PostCard from '../PostCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getPostByUserIdApi } from '~/services/post.service';
+import { getPostByEmailApi } from '~/services/post.service';
 import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
@@ -15,7 +15,7 @@ function ProfileActivity({ profileData }) {
     const [posts, setPosts] = useState([]);
 
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
-    const id = accountLogin?.id;
+    const email = profileData.email;
 
     const updateScrollButtons = () => {
         const container = listRef.current;
@@ -38,9 +38,9 @@ function ProfileActivity({ profileData }) {
 
     useEffect(() => {
         // Lấy bài đăng của người dùng từ API
-        const fetchPostsByUserId = async (accessToken, userId) => {
+        const fetchPostsByEmail = async (accessToken, email) => {
             try {
-                const response = await getPostByUserIdApi(accessToken, userId);
+                const response = await getPostByEmailApi(accessToken, email);
                 setPosts(response.data);
             } catch (error) {
                 console.error('Lỗi khi lấy profile:', error);
@@ -53,14 +53,14 @@ function ProfileActivity({ profileData }) {
             container.addEventListener('scroll', updateScrollButtons);
         }
 
-        fetchPostsByUserId(accessToken, id);
+        fetchPostsByEmail(accessToken, email);
 
         return () => {
             if (container) {
                 container.removeEventListener('scroll', updateScrollButtons);
             }
         };
-    }, [id]);
+    }, [email, accessToken]);
 
     // vì lần mount đầu thì useEffect không chạy ngay nên cần kiểm tra profileData
     if (!profileData) {
