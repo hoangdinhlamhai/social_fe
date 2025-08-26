@@ -10,9 +10,7 @@ function SuggestedCard({ userData }) {
             <div className={cx('card')}>
                 <button className={cx('close-btn')}>×</button>
                 <img src={userData.avatarUrl} alt="Avatar" className={cx('avatar')} />
-                <h3 className={cx('name')}>
-                    {userData.firstName} {userData.lastName}
-                </h3>
+                <h3 className={cx('name')}>{userData.name}</h3>
                 <p className={cx('title')}>{userData.bio}</p>
                 <span className={cx('followers')}> người theo dõi</span>
                 <button className={cx('follow-btn')}>+ Theo dõi</button>

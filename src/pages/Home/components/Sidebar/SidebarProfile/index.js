@@ -14,8 +14,7 @@ function SidebarProfile({ profileData }) {
             <div className={cx('cover')} />
             <div className={cx('avatarWrapper')}>
                 <div className={cx('avatar')}>
-                    <img className={cx('avatarImg')} src={`${profileData.avatarUrl}?sz=200`} alt="User Avatar" />
-                    {/* dùng src={`${profileData.avatarUrl}?sz=200`} để hiển thị ảnh từ gg trả về */}
+                    <img className={cx('avatarImg')} src={profileData.avatarUrl} alt="User Avatar" />
                 </div>
                 <span className={cx('avatarIcon')}>+</span>
             </div>
