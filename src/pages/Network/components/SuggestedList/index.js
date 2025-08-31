@@ -17,22 +17,24 @@ function SuggestedList({ currentUserId }) {
                 const response = await getAiSuggestionsForUser(currentUserId, accessToken);
                 let jsonString = response.data;
 
-                if (jsonString.startsWith('```json')) {
-                    // Xóa ```json ở đầu và ``` ở cuối
-                    jsonString = jsonString.substring(7, jsonString.length - 3).trim();
-                }
+                setSuggestionsUser(jsonString);
 
-                // Đoạn regex này sẽ tìm đoạn text đầu tiên bắt đầu bằng [ và kết thúc bằng ]
-                const match = jsonString.match(/(\[.*\])/s);
-                if (match) {
-                    // Lấy nội dung đã được trích xuất
-                    const extractedJson = match[0];
-                    const suggestionsArray = JSON.parse(extractedJson);
-                    setSuggestionsUser(suggestionsArray);
-                    console.log('AI Suggestions:', suggestionsArray);
-                } else {
-                    setSuggestionsUser([]); // Đặt về mảng rỗng
-                }
+                // if (jsonString.startsWith('```json')) {
+                //     // Xóa ```json ở đầu và ``` ở cuối
+                //     jsonString = jsonString.substring(7, jsonString.length - 3).trim();
+                // }
+
+                // // Đoạn regex này sẽ tìm đoạn text đầu tiên bắt đầu bằng [ và kết thúc bằng ]
+                // const match = jsonString.match(/(\[.*\])/s);
+                // if (match) {
+                //     // Lấy nội dung đã được trích xuất
+                //     const extractedJson = match[0];
+                //     const suggestionsArray = JSON.parse(extractedJson);
+                //     setSuggestionsUser(suggestionsArray);
+                //     console.log('AI Suggestions:', suggestionsArray);
+                // } else {
+                //     setSuggestionsUser([]); // Đặt về mảng rỗng
+                // }
             } catch (error) {
                 console.error('Error fetching AI suggestions:', error);
             }
