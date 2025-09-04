@@ -9,6 +9,7 @@ import OTPForm from '~/pages/Auth/ForgotPassword/OTPForm';
 import NewPasswordForm from '~/pages/Auth/ForgotPassword/NewPasswordForm';
 import Post from '~/pages/Post';
 import Network from '~/pages/Network';
+import Chat from '~/pages/Chat';
 
 //khong can dang nhap cung access duoc
 const publicRoutes = [
@@ -21,6 +22,7 @@ const publicRoutes = [
     { path: config.routes.forgotPassword, component: EmailForm, layout: null },
     { path: config.routes.verifyOtp, component: OTPForm, layout: null },
     { path: config.routes.newPassword, component: NewPasswordForm, layout: null },
+    { path: config.routes.chat, component: Chat },
 ];
 
 //yeu cau dang nhap moi access duoc

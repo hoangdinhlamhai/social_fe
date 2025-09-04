@@ -8,6 +8,7 @@ const routes = {
     forgotPassword: '/forgot-password',
     verifyOtp: '/verify-otp',
     newPassword: '/new-password',
+    chat: '/chat',
 };
 
 export default routes;
