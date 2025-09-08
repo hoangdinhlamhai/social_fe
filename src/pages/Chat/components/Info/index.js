@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Info.module.scss';
-import { FaUser, FaBell, FaSearch, FaLock, FaChevronDown } from 'react-icons/fa';
+import { FaUser, FaBell, FaSearch, FaChevronDown } from 'react-icons/fa';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);

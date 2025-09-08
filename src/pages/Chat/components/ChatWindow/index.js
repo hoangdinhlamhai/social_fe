@@ -3,15 +3,14 @@ import styles from './ChatWindow.module.scss';
 import { IoVideocam, IoSend } from 'react-icons/io5';
 import { IoIosInformationCircle } from 'react-icons/io';
 import { BsTelephoneFill } from 'react-icons/bs';
+import { useChat } from '~/hooks/useChat';
+import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function ChatWindow() {
-    const messages = [
-        { id: 1, sender: 'me', text: 'Hello!' },
-        { id: 2, sender: 'other', text: 'Hi, how are you?' },
-        { id: 3, sender: 'me', text: "I'm good, thanks." },
-    ];
+function ChatWindow({ roomId, currentUser, accessToken }) {
+    const { messages, sendMessage } = useChat(roomId, currentUser, accessToken);
+    const [newMessage, setNewMessage] = useState('');
 
     return (
         <div className={cx('chat-window')}>
@@ -34,17 +33,28 @@ function ChatWindow() {
             {/* Message list */}
             <div className={cx('message-list')}>
                 {messages.map((msg) => (
-                    <div key={msg.id} className={`message ${msg.sender === 'me' ? 'me' : 'other'}`}>
-                        <div className={cx('bubble')}>{msg.text}</div>
+                    <div key={msg.id} className={`message ${msg.senderId === currentUser.id ? 'sent' : 'received'}`}>
+                        <div className={cx('bubble')}>{msg.content}</div>
                     </div>
                 ))}
             </div>
 
             {/* Input */}
             <div className={cx('chat-input')}>
-                <input type="text" placeholder="Aa" />
+                <input
+                    type="text"
+                    placeholder="Nhập tin nhắn..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                />
                 <button>😊</button>
-                <button style={{ marginTop: '6px' }}>
+                <button
+                    style={{ marginTop: '6px' }}
+                    onClick={() => {
+                        sendMessage(newMessage);
+                        setNewMessage('');
+                    }}
+                >
                     <IoSend />
                 </button>
             </div>

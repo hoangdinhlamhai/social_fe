@@ -15,7 +15,7 @@ const navItems = [
     { icon: <Home size={20} />, label: 'Home', link: '/' },
     { icon: <Users size={20} />, label: 'My Network', link: '/network' },
     { icon: <Briefcase size={20} />, label: 'Jobs' },
-    { icon: <MessageSquare size={20} />, label: 'Messaging', link: '/messages' },
+    { icon: <MessageSquare size={20} />, label: 'Messaging', link: '/chat' },
     { icon: <Bell size={20} />, label: 'Notifications' },
 ];
 
