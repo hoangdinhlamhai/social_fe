@@ -47,17 +47,20 @@ function SuggestedList({ currentUserId }) {
     }
 
     return (
-        <div className={cx('list-wrapper')}>
-            <div className={cx('header')}>
-                <h2>Phổ biến trên LinkedIn</h2>
-                <a href="#">Hiển thị tất cả</a>
+        console.log('Suggestions User:', suggestionsUser),
+        (
+            <div className={cx('list-wrapper')}>
+                <div className={cx('header')}>
+                    <h2>Phổ biến trên LinkedIn</h2>
+                    <a href="#">Hiển thị tất cả</a>
+                </div>
+                <div className={cx('card-list')}>
+                    {suggestionsUser.map((item) => (
+                        <SuggestedCard key={item.id} userData={item} />
+                    ))}
+                </div>
             </div>
-            <div className={cx('card-list')}>
-                {suggestionsUser.map((item) => (
-                    <SuggestedCard key={item.id} userData={item} />
-                ))}
-            </div>
-        </div>
+        )
     );
 }
 
