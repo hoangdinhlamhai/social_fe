@@ -1,23 +1,42 @@
 import classNames from 'classnames/bind';
 import styles from './Info.module.scss';
 import { FaUser, FaBell, FaSearch, FaChevronDown } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
+import { useSelector } from 'react-redux';
+import { getChatRoomApi } from '~/services/chat.service';
 
 const cx = classNames.bind(styles);
 
-function Info() {
+function Info({ roomId }) {
     const [openSection, setOpenSection] = useState(null);
+    const [guestUserInfo, setGuestUserInfo] = useState(null);
+    const { accessToken, accountLogin } = useSelector((state) => state.auth);
 
     const toggleSection = (section) => {
         setOpenSection(openSection === section ? null : section);
     };
+
+    useEffect(() => {
+        const fetchUserInfoInChatRoom = async () => {
+            const chatRoomData = await getChatRoomApi(accessToken, roomId);
+            const guestUser = chatRoomData.participantUser.find((user) => user.id !== accountLogin.id);
+            setGuestUserInfo(guestUser);
+        };
+        fetchUserInfoInChatRoom();
+    }, [roomId, accessToken, accountLogin]);
+
+    if (!guestUserInfo) {
+        return <div className={cx('chat-info')}>Loading...</div>;
+    }
 
     return (
         <div className={cx('chat-info')}>
             {/* Avatar + name */}
             <div className={cx('info-header')}>
                 <div className={cx('avatar')}></div>
-                <h2 className={cx('chat-name')}>User name</h2>
+                <h2 className={cx('chat-name')}>
+                    {guestUserInfo.firstName} {guestUserInfo.lastName}
+                </h2>
             </div>
 
             {/* Action buttons */}
