@@ -14,14 +14,16 @@ const fetchConversationsApi = async (accessToken, roomId) => {
 const createChatRoomApi = async (accessToken, userLoginId, userGuestId) => {
     const res = await axios.post(
         `${BASE_URL}/api/chat/create-room`,
+        //chuyển phần Request Body vào tham số thứ 2
+        {
+            userIdLogin: userLoginId,
+            userId: userGuestId,
+        },
+        //chuyển phần config vào tham số thứ 3
         {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
-        },
-        {
-            userIdLogin: userLoginId,
-            userId: userGuestId,
         },
     );
     return res.data;
