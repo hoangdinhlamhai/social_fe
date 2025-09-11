@@ -14,7 +14,7 @@ const useChat = (roomId, currentUser, accessToken) => {
 
         const client = new Client({
             // Thay vì new SockJS, chúng ta cung cấp một factory function
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+            webSocketFactory: () => new SockJS('http://localhost:8080/websocket'),
             debug: (str) => {
                 console.log(new Date(), str); // Bật debug để xem log chi tiết
             },
