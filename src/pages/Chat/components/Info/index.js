@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './Info.module.scss';
 import { FaUser, FaBell, FaSearch, FaChevronDown } from 'react-icons/fa';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getChatRoomApi } from '~/services/chat.service';
 

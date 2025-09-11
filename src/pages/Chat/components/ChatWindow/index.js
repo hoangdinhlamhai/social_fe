@@ -4,19 +4,36 @@ import { IoVideocam, IoSend } from 'react-icons/io5';
 import { IoIosInformationCircle } from 'react-icons/io';
 import { BsTelephoneFill } from 'react-icons/bs';
 import { useChat } from '~/hooks/useChat';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getChatRoomApi } from '~/services/chat.service';
 
 const cx = classNames.bind(styles);
 
 function ChatWindow({ roomId, currentUser, accessToken }) {
     const { messages, sendMessage } = useChat(roomId, currentUser, accessToken);
     const [newMessage, setNewMessage] = useState('');
+    const [guestUserInfo, setGuestUserInfo] = useState(null);
+
+    useEffect(() => {
+        const fetchUserInfoInChatRoom = async () => {
+            const chatRoomData = await getChatRoomApi(accessToken, roomId);
+            const guestUser = chatRoomData.participantUser.find((user) => user.id !== currentUser.id);
+            setGuestUserInfo(guestUser);
+        };
+        fetchUserInfoInChatRoom();
+    }, [roomId, accessToken, currentUser]);
+
+    if (!guestUserInfo) {
+        return <div className={cx('chat-window')}>Loading...</div>;
+    }
 
     return (
         <div className={cx('chat-window')}>
             {/* Header */}
             <div className={cx('chat-header')}>
-                <div className={cx('chat-title')}>Tên đoạn chat</div>
+                <div className={cx('chat-title')}>
+                    {guestUserInfo.firstName} {guestUserInfo.lastName}
+                </div>
                 <div className={cx('chat-actions')}>
                     <button>
                         <BsTelephoneFill />
