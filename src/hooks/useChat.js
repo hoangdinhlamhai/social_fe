@@ -6,8 +6,7 @@ import { fetchConversationsApi } from '~/services/chat.service';
 const useChat = (roomId, currentUser, accessToken) => {
     // const [conversations, setConversations] = useState([]);
     const stompClientRef = useRef(null); // Lưu trữ stompClient, ko mất khi re-render, ko kích hoạt re-render
-    const messagesRef = useRef([]); // Dùng useRef thay vì useState để lưu messages
-    const setMessagesState = useState([])[1]; // Chỉ lấy hàm setState để trigger re-render
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         if (!roomId || !currentUser) return;
@@ -28,11 +27,12 @@ const useChat = (roomId, currentUser, accessToken) => {
             // Subscribe vào topic
             client.subscribe(`/topic/chat/room/${roomId}`, (payload) => {
                 const newMessage = JSON.parse(payload.body);
-                // Cập nhật messages thông qua ref và trigger re-render
-                messagesRef.current = [...messagesRef.current, newMessage];
-                setMessagesState([...messagesRef.current]);
+                // Dùng callback để đảm bảo luôn thêm vào state mới nhất
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
         };
+
+        stompClientRef.current = client;
 
         // Hàm được gọi khi có lỗi
         client.onStompError = (frame) => {
@@ -40,28 +40,24 @@ const useChat = (roomId, currentUser, accessToken) => {
             console.error('Additional details: ' + frame.body);
         };
 
-        // Hàm tải lịch sử và kích hoạt client
-        const fetchAndConnect = async () => {
+        // lịch sử tnhan và kích hoạt client
+        const fetchHistory = async () => {
             try {
                 const historyData = await fetchConversationsApi(accessToken, roomId);
-                // Cập nhật messages và trigger re-render
-                messagesRef.current = historyData;
-                setMessagesState(historyData);
-
-                // 3. Kích hoạt kết nối
-                client.activate();
-                stompClientRef.current = client;
+                setMessages(historyData);
             } catch (error) {
                 console.error('Failed to fetch history or connect:', error);
             }
         };
 
-        fetchAndConnect();
+        fetchHistory();
+        // Kích hoạt kết nối
+        client.activate();
 
+        // Cleanup function khi component unmount hoặc roomId/currentUser thay đổi
         return () => {
-            if (stompClientRef.current) {
-                stompClientRef.current.deactivate();
-            }
+            console.log('clean up: disconnecting...');
+            client.deactivate();
         };
     }, [roomId, currentUser, accessToken]);
 
@@ -80,7 +76,7 @@ const useChat = (roomId, currentUser, accessToken) => {
         }
     };
 
-    return { messages: messagesRef.current, sendMessage };
+    return { messages, sendMessage };
 };
 
 export { useChat };
