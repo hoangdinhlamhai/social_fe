@@ -39,4 +39,14 @@ const getChatRoomApi = async (accessToken, roomId) => {
     return res.data;
 };
 
-export { fetchConversationsApi, createChatRoomApi, getChatRoomApi };
+const findChatRoomByParticipants = async (accessToken, userLoginId, userGuestId) => {
+    const res = await axios.get(`${BASE_URL}/api/chat/get-chat-room-by-participantsId`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+        params: { userLoginId, userGuestId },
+    });
+    return res.data;
+};
+
+export { fetchConversationsApi, createChatRoomApi, getChatRoomApi, findChatRoomByParticipants };

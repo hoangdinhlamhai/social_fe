@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './SuggestedCard.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { createChatRoomApi } from '~/services/chat.service';
+import { createChatRoomApi, findChatRoomByParticipants } from '~/services/chat.service';
 
 const cx = classNames.bind(styles);
 
@@ -18,8 +18,14 @@ function SuggestedCard({ userData }) {
         const userLoginId = accountLogin.id;
         const userGuestId = userData.id;
 
-        const response = await createChatRoomApi(accessToken, userLoginId, userGuestId);
-        navigate(`/chat/${response.id}`);
+        const existingRoom = await findChatRoomByParticipants(accessToken, userLoginId, userGuestId);
+        if (existingRoom) {
+            navigate(`/chat/${existingRoom.id}`);
+            return;
+        } else {
+            const newRoom = await createChatRoomApi(accessToken, userLoginId, userGuestId);
+            navigate(`/chat/${newRoom.id}`);
+        }
     };
 
     return (
