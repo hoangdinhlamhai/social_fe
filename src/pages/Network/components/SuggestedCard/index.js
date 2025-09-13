@@ -18,11 +18,10 @@ function SuggestedCard({ userData }) {
         const userLoginId = accountLogin.id;
         const userGuestId = userData.id;
 
-        const existingRoom = await findChatRoomByParticipants(accessToken, userLoginId, userGuestId);
-        if (existingRoom) {
+        try {
+            const existingRoom = await findChatRoomByParticipants(accessToken, userLoginId, userGuestId);
             navigate(`/chat/${existingRoom.id}`);
-            return;
-        } else {
+        } catch (error) {
             const newRoom = await createChatRoomApi(accessToken, userLoginId, userGuestId);
             navigate(`/chat/${newRoom.id}`);
         }
