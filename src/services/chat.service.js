@@ -49,4 +49,20 @@ const findChatRoomByParticipants = async (accessToken, userLoginId, userGuestId)
     return res.data;
 };
 
-export { fetchConversationsApi, createChatRoomApi, getChatRoomApi, findChatRoomByParticipants };
+const getListChatRoomByUserId = async (accessToken, userLoginId) => {
+    const res = await axios.get(`${BASE_URL}/api/chat/get-list-chat-room`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+        params: { userLoginId },
+    });
+    return res.data;
+};
+
+export {
+    fetchConversationsApi,
+    createChatRoomApi,
+    getChatRoomApi,
+    findChatRoomByParticipants,
+    getListChatRoomByUserId,
+};

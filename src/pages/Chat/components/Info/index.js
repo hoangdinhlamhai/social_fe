@@ -33,7 +33,11 @@ function Info({ roomId }) {
         <div className={cx('chat-info')}>
             {/* Avatar + name */}
             <div className={cx('info-header')}>
-                <div className={cx('avatar')}></div>
+                <img
+                    src={guestUserInfo.avatar}
+                    alt={`${guestUserInfo.firstName} ${guestUserInfo.lastName}`}
+                    className={cx('avatar')}
+                />
                 <h2 className={cx('chat-name')}>
                     {guestUserInfo.firstName} {guestUserInfo.lastName}
                 </h2>

@@ -95,6 +95,8 @@
         .chat-last {
           font-size: 13px;
           color: #b0b3b8;
+          display: flex;
+          justify-content: space-between;
 
           .last-msg {
             color: #b0b3b8;
