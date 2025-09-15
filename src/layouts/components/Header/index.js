@@ -5,9 +5,10 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { logoutApi } from '~/services/auth.service';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getMeProfileApi } from '~/services/user.service';
+import { getListChatRoomByUserId } from '~/services/chat.service';
 
 const cx = classNames.bind(styles);
 
@@ -15,15 +16,17 @@ const navItems = [
     { icon: <Home size={20} />, label: 'Home', link: '/' },
     { icon: <Users size={20} />, label: 'My Network', link: '/network' },
     { icon: <Briefcase size={20} />, label: 'Jobs' },
-    { icon: <MessageSquare size={20} />, label: 'Messaging', link: '/chat' },
+    { icon: <MessageSquare size={20} />, label: 'Messaging' },
     { icon: <Bell size={20} />, label: 'Notifications' },
 ];
 
 function Header() {
     const navigate = useNavigate();
 
-    const { accessToken } = useSelector((state) => state.auth);
+    const { accessToken, accountLogin } = useSelector((state) => state.auth);
     const [profileData, setProfileData] = useState(null);
+    const [latestRoomId, setLatestRoomId] = useState(null);
+    const [hasChats, setHasChats] = useState(false);
 
     const handleLogout = async () => {
         await logoutApi();
@@ -40,8 +43,36 @@ function Header() {
                 console.error('Error fetching profile data:', error);
             }
         };
+
+        const fetchLatestChatRoom = async () => {
+            try {
+                const rooms = await getListChatRoomByUserId(accessToken, accountLogin.id);
+                if (rooms && rooms.length > 0) {
+                    setHasChats(true);
+                    setLatestRoomId(rooms[0].id);
+                } else {
+                    setHasChats(false);
+                }
+            } catch (error) {
+                console.error('Error fetching chat rooms:', error);
+            }
+        };
         fetchProfileData();
-    }, [accessToken]);
+        fetchLatestChatRoom();
+    }, [accessToken, accountLogin]);
+
+    const navItemsMemo = useMemo(() => {
+        return navItems.map((item) => {
+            if (item.label === 'Messaging') {
+                return {
+                    ...item,
+                    // Gán link chỉ khi có phòng chat
+                    link: hasChats ? `/chat/${latestRoomId}` : undefined,
+                };
+            }
+            return item;
+        });
+    }, [latestRoomId, hasChats]); // Chỉ tính toán lại khi latestRoomId hoặc hasChats thay đổi
 
     if (!profileData) {
         return <div className={cx('loading')}>Loading...</div>;
@@ -67,7 +98,7 @@ function Header() {
                 </div>
 
                 <nav className={cx('right')}>
-                    {navItems.map((item, idx) => (
+                    {navItemsMemo.map((item, idx) => (
                         <Link to={item.link} key={idx} className={cx('navItem')}>
                             {item.icon}
                             <span>{item.label}</span>
