@@ -3,6 +3,7 @@ import styles from './Sidebar.module.scss';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getListChatRoomByUserId } from '~/services/chat.service';
+import { Link } from 'react-router-dom';
 
 //format (npm install dayjs)
 import dayjs from 'dayjs';
@@ -31,38 +32,8 @@ dayjs.locale('vi', {
     },
 });
 
-function Sidebar() {
-    const { accessToken, accountLogin } = useSelector((state) => state.auth);
-    const [chatRooms, setChatRooms] = useState([]);
-
-    useEffect(() => {
-        const fetchListChatRoomAndLastMessage = async () => {
-            const rooms = await getListChatRoomByUserId(accessToken, accountLogin.id);
-            setChatRooms(rooms);
-        };
-
-        fetchListChatRoomAndLastMessage();
-    }, [accessToken, accountLogin]);
-
-    if (!chatRooms || chatRooms.length === 0) {
-        <div className={cx('sidebar-container')}>
-            <div className={cx('sidebar-header')}>
-                <h2>Đoạn chat</h2>
-            </div>
-
-            <div className={cx('search-box')}>
-                <input type="text" placeholder="Tìm kiếm trên Messenger" />
-            </div>
-
-            <div className={cx('tabs')}>
-                <button className={cx('active')}>Tất cả</button>
-                <button>Chưa đọc</button>
-                <button>Nhóm</button>
-            </div>
-
-            <div className={cx('chat-list')}>Không có đoạn chat nào</div>
-        </div>;
-    }
+function Sidebar({ chatRooms }) {
+    const { accountLogin } = useSelector((state) => state.auth);
 
     return (
         <div className={cx('sidebar-container')}>
@@ -86,7 +57,7 @@ function Sidebar() {
                     const guestUser = room.participantUser.find((user) => user.id !== accountLogin.id);
                     const lastMessage = room.lastMessage;
                     return (
-                        <div key={room.id} className={cx('chat-item')}>
+                        <Link key={room.id} to={`/chat/${room.id}`} className={cx('chat-item')}>
                             <img
                                 src={guestUser.avatar}
                                 alt={`${guestUser.firstName} ${guestUser.lastName}`}
@@ -103,7 +74,7 @@ function Sidebar() {
                                     <span className={cx('time')}>{dayjs(lastMessage.sentAt).fromNow()}</span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

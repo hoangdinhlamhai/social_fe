@@ -9,10 +9,23 @@ import { getChatRoomApi } from '~/services/chat.service';
 
 const cx = classNames.bind(styles);
 
-function ChatWindow({ roomId, currentUser, accessToken }) {
-    const { messages, sendMessage } = useChat(roomId, currentUser, accessToken);
+function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent }) {
+    const { sendMessage } = useChat(roomId, currentUser, accessToken);
     const [newMessage, setNewMessage] = useState('');
     const [guestUserInfo, setGuestUserInfo] = useState(null);
+
+    const handleSendMessage = () => {
+        const newMsg = {
+            roomId,
+            senderId: currentUser.id,
+            senderName: `${currentUser.firstName} ${currentUser.lastName}`,
+            content: newMessage,
+            sentAt: new Date().toISOString(),
+        };
+        sendMessage(newMessage);
+        setNewMessage('');
+        onMessageSent(newMsg); // báo cho cha cập nhật sidebar ngay
+    };
 
     useEffect(() => {
         const fetchUserInfoInChatRoom = async () => {
@@ -65,13 +78,7 @@ function ChatWindow({ roomId, currentUser, accessToken }) {
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
                 <button>😊</button>
-                <button
-                    style={{ marginTop: '6px' }}
-                    onClick={() => {
-                        sendMessage(newMessage);
-                        setNewMessage('');
-                    }}
-                >
+                <button style={{ marginTop: '6px' }} onClick={handleSendMessage}>
                     <IoSend />
                 </button>
             </div>
