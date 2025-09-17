@@ -6,6 +6,7 @@ import { BsTelephoneFill } from 'react-icons/bs';
 import { useChat } from '~/hooks/useChat';
 import { useState, useEffect } from 'react';
 import { getChatRoomApi } from '~/services/chat.service';
+import EmojiPicker from 'emoji-picker-react';
 
 const cx = classNames.bind(styles);
 
@@ -13,6 +14,7 @@ function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent 
     const { sendMessage } = useChat(roomId, currentUser, accessToken);
     const [newMessage, setNewMessage] = useState('');
     const [guestUserInfo, setGuestUserInfo] = useState(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const handleSendMessage = () => {
         const newMsg = {
@@ -25,6 +27,7 @@ function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent 
         sendMessage(newMessage);
         setNewMessage('');
         onMessageSent(newMsg); // báo cho cha cập nhật sidebar ngay
+        setShowEmojiPicker((prev) => !prev);
     };
 
     useEffect(() => {
@@ -77,8 +80,34 @@ function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent 
                     placeholder="Nhập tin nhắn..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage();
+                        }
+                    }}
                 />
-                <button>😊</button>
+                <div style={{ position: 'relative' }}>
+                    <button type="button" onClick={() => setShowEmojiPicker((prev) => !prev)}>
+                        😊
+                    </button>
+                    {showEmojiPicker && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                bottom: '40px',
+                                right: '0',
+                                zIndex: 1000,
+                            }}
+                        >
+                            <EmojiPicker
+                                onEmojiClick={(emojiData) => {
+                                    setNewMessage((prev) => prev + emojiData.emoji);
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
                 <button style={{ marginTop: '6px' }} onClick={handleSendMessage}>
                     <IoSend />
                 </button>
