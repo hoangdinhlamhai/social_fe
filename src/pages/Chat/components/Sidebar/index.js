@@ -1,9 +1,8 @@
 import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
-import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { getListChatRoomByUserId } from '~/services/chat.service';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 //format (npm install dayjs)
 import dayjs from 'dayjs';
@@ -34,6 +33,7 @@ dayjs.locale('vi', {
 
 function Sidebar({ chatRooms }) {
     const { accountLogin } = useSelector((state) => state.auth);
+    const { roomId } = useParams();
 
     return (
         <div className={cx('sidebar-container')}>
@@ -53,30 +53,40 @@ function Sidebar({ chatRooms }) {
 
             <div className={cx('chat-list')}>
                 {/* map(item => ( ... )) với dấu ngoặc đơn `()`, React mong đợi bạn trả về một phần tử JSX. không thể chèn các dòng lệnh khác vào giữa. */}
-                {chatRooms.map((room) => {
-                    const guestUser = room.participantUser.find((user) => user.id !== accountLogin.id);
-                    const lastMessage = room.lastMessage;
-                    return (
-                        <Link key={room.id} to={`/chat/${room.id}`} className={cx('chat-item')}>
-                            <img
-                                src={guestUser.avatar}
-                                alt={`${guestUser.firstName} ${guestUser.lastName}`}
-                                className={cx('avatar')}
-                            />
-                            <div className={cx('chat-content')}>
-                                <div className={cx('chat-name')}>
-                                    {guestUser.lastName} {guestUser.firstName}
+                {chatRooms
+                    .slice() // tạo bản sao mảng để không làm thay đổi mảng gốc
+                    .sort((a, b) => new Date(b.lastMessage.sentAt) - new Date(a.lastMessage.sentAt))
+                    .map((room) => {
+                        const guestUser = room.participantUser.find((user) => user.id !== accountLogin.id);
+                        const lastMessage = room.lastMessage;
+                        return (
+                            <Link
+                                key={room.id}
+                                to={`/chat/${room.id}`}
+                                className={cx('chat-item', {
+                                    active: String(room.id) === roomId,
+                                })}
+                            >
+                                <img
+                                    src={guestUser.avatar}
+                                    alt={`${guestUser.firstName} ${guestUser.lastName}`}
+                                    className={cx('avatar')}
+                                />
+                                <div className={cx('chat-content')}>
+                                    <div className={cx('chat-name')}>
+                                        {guestUser.lastName} {guestUser.firstName}
+                                    </div>
+                                    <div className={cx('chat-last')}>
+                                        <span className={cx('last-msg')}>
+                                            {lastMessage.senderId === accountLogin.id ? 'Bạn: ' : ''}{' '}
+                                            {lastMessage.content}
+                                        </span>
+                                        <span className={cx('time')}>{dayjs(lastMessage.sentAt).fromNow()}</span>
+                                    </div>
                                 </div>
-                                <div className={cx('chat-last')}>
-                                    <span className={cx('last-msg')}>
-                                        {lastMessage.senderId === accountLogin.id ? 'Bạn: ' : ''} {lastMessage.content}
-                                    </span>
-                                    <span className={cx('time')}>{dayjs(lastMessage.sentAt).fromNow()}</span>
-                                </div>
-                            </div>
-                        </Link>
-                    );
-                })}
+                            </Link>
+                        );
+                    })}
             </div>
         </div>
     );

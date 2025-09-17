@@ -3,7 +3,7 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { fetchConversationsApi } from '~/services/chat.service';
 
-const useChat = (roomId, currentUser, accessToken) => {
+const useChat = (roomId, currentUser, accessToken, onMessageReceived) => {
     // const [conversations, setConversations] = useState([]);
     const stompClientRef = useRef(null); // Lưu trữ stompClient, ko mất khi re-render, ko kích hoạt re-render
     const [messages, setMessages] = useState([]);
@@ -29,6 +29,11 @@ const useChat = (roomId, currentUser, accessToken) => {
                 const newMessage = JSON.parse(payload.body);
                 // Dùng callback để đảm bảo luôn thêm vào state mới nhất
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+                // Báo ra ngoài cho Sidebar (nếu truyền onMessageReceived từ ngoài vào)
+                if (onMessageReceived) {
+                    onMessageReceived(newMessage);
+                }
             });
         };
 

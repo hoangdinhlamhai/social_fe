@@ -15,7 +15,21 @@ const cx = classNames.bind(styles);
 function Chat() {
     const { roomId } = useParams();
     const { accessToken, accountLogin } = useSelector((state) => state.auth);
-    const { messages } = useChat(roomId, accountLogin, accessToken);
+    const { messages } = useChat(
+        roomId,
+        accountLogin,
+        accessToken,
+        // Hàm này được gọi khi có tin nhắn mới từ WebSocket
+        (newMsg) => {
+            // Khi nhận bất kỳ tin nhắn nào, update lại lastMessage trong Sidebar
+            setChatRooms((prev) =>
+                prev.map((room) =>
+                    //gửi lại 1 lastMessage bản clone để ngay lập tức cập nhật state => render lại giao diện, không cần chờ WebSocket gửi về
+                    room.id === Number(newMsg.roomId) ? { ...room, lastMessage: { ...newMsg } } : room,
+                ),
+            );
+        },
+    );
 
     const [chatRooms, setChatRooms] = useState([]);
 

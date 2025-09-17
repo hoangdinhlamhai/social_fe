@@ -42,7 +42,6 @@ function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent 
 
     return (
         <div className={cx('chat-window')}>
-            {/* Header */}
             <div className={cx('chat-header')}>
                 <div className={cx('chat-title')}>
                     {guestUserInfo.firstName} {guestUserInfo.lastName}
@@ -60,16 +59,18 @@ function ChatWindow({ roomId, currentUser, accessToken, messages, onMessageSent 
                 </div>
             </div>
 
-            {/* Message list */}
             <div className={cx('message-list')}>
                 {messages.map((msg) => (
-                    <div key={msg.id} className={`message ${msg.senderId === currentUser.id ? 'sent' : 'received'}`}>
+                    // <div key={msg.id} className={`message ${msg.senderId === currentUser.id ? 'sent' : 'received'}`}> => "message sent", "message received".
+                    //     <div className={cx('bubble')}>{msg.content}</div>
+                    // </div>
+                    // với css Module thì phải như này: => cx('message', 'sent')
+                    <div key={msg.id} className={cx('message', msg.senderId === currentUser.id ? 'sent' : 'received')}>
                         <div className={cx('bubble')}>{msg.content}</div>
                     </div>
                 ))}
             </div>
 
-            {/* Input */}
             <div className={cx('chat-input')}>
                 <input
                     type="text"
