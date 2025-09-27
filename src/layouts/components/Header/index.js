@@ -27,6 +27,7 @@ function Header() {
     const [profileData, setProfileData] = useState(null);
     const [latestRoomId, setLatestRoomId] = useState(null);
     const [hasChats, setHasChats] = useState(false);
+    const email = accountLogin?.email;
 
     const handleLogout = async () => {
         await logoutApi();
@@ -131,7 +132,7 @@ function Header() {
                                     </div>
                                 </div>
 
-                                <Link to="/profile" className={cx('viewProfile')}>
+                                <Link to={`/profile/${email}`} className={cx('viewProfile')}>
                                     Xem hồ sơ
                                 </Link>
                             </div>
