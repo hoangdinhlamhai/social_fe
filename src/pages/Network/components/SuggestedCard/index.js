@@ -31,11 +31,9 @@ function SuggestedCard({ userData }) {
         <Link to={`/profile/${userData.email}`} className={cx('card-link')}>
             <div className={cx('card')}>
                 <button className={cx('close-btn')}>×</button>
-                <img src={userData.avatarUrl} alt="Avatar" className={cx('avatar')} />
+                <img src={userData.avatar_url} alt="Avatar" className={cx('avatar')} />
                 <h3 className={cx('name')}>{userData.name}</h3>
                 <p className={cx('title')}>{userData.bio}</p>
-                <span className={cx('followers')}> người theo dõi</span>
-                <button className={cx('follow-btn')}>+ Theo dõi</button>
                 <button className={cx('follow-btn')} onClick={handleMessageClick}>
                     Nhắn tin
                 </button>

@@ -17,8 +17,14 @@ function CreatePostModal({ isOpen, onRequestClose, profileData }) {
     const { accessToken } = useSelector((state) => state.auth);
 
     const [selectedImages, setSelectedImages] = useState([]);
-
     const fileInputRef = useRef();
+
+    const imageCount = selectedImages.length;
+    // Layout sẽ luôn là 'grid-container-5' nếu có 5 ảnh trở lên
+    const containerClass = imageCount > 0 ? cx('grid-container', `grid-container-${Math.min(imageCount, 5)}`) : '';
+
+    const imagesToShow = selectedImages.slice(0, 5);
+    const remainingImagesCount = imageCount > 5 ? imageCount - 5 : 0;
 
     const handleCreatePost = async () => {
         try {
@@ -44,6 +50,12 @@ function CreatePostModal({ isOpen, onRequestClose, profileData }) {
     const handleUploadImage = (e) => {
         const files = Array.from(e.target.files);
         setSelectedImages(files); // Lưu danh sách ảnh
+    };
+
+    const handleRemoveImage = (indexToRemove) => {
+        // Cập nhật lại state selectedImages bằng cách lọc ra phần tử
+        // có index khác với indexToRemove
+        setSelectedImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
     };
 
     if (!profileData) {
@@ -84,9 +96,27 @@ function CreatePostModal({ isOpen, onRequestClose, profileData }) {
                 }}
             />
 
-            {selectedImages.map((file, index) => (
-                <img key={index} src={URL.createObjectURL(file)} alt="" width="200" height="200" />
-            ))}
+            {imageCount > 0 && (
+                <div className={cx('grid-container', `layout-${Math.min(imageCount, 5)}`)}>
+                    {imagesToShow.map((file, index) => (
+                        <div key={index} className={cx('image-wrapper')}>
+                            <img
+                                src={URL.createObjectURL(file)}
+                                alt={`preview ${index}`}
+                                className={cx('preview-image')}
+                            />
+
+                            {index === 4 && remainingImagesCount > 0 && (
+                                <div className={cx('more-images-overlay')}>+{remainingImagesCount}</div>
+                            )}
+
+                            <button className={cx('remove-btn')} onClick={() => handleRemoveImage(index)}>
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             <div className={cx('actions')}>
                 <div className={cx('leftIcons')}>
