@@ -7,6 +7,8 @@ import styles from './Post.module.scss';
 import { getPostByEmailApi } from '~/services/post.service';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getUserProfileApi } from '~/services/user.service';
 
 const cx = classNames.bind(styles);
 
@@ -19,29 +21,44 @@ const newsList = [
 ];
 
 function Post() {
-    const { accessToken, accountLogin } = useSelector((state) => state.auth);
-    const userId = accountLogin?.id;
-
+    const { accessToken } = useSelector((state) => state.auth);
     const [posts, setPosts] = useState([]);
+    const [profileData, setProfileData] = useState(null);
+    const { email: emailFromParams } = useParams();
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await getPostByEmailApi(accessToken, userId);
+                const response = await getPostByEmailApi(accessToken, emailFromParams);
                 setPosts(response.data);
             } catch (error) {
                 console.error('Lỗi khi lấy bài đăng:', error);
             }
         };
 
+        const fetchProfileData = async () => {
+            try {
+                const response = await getUserProfileApi(accessToken, emailFromParams);
+                setProfileData(response);
+            } catch (error) {
+                console.error('Lỗi khi lấy profile:', error);
+            }
+        };
+
         fetchPosts();
-    }, [userId, accessToken]);
+        fetchProfileData();
+    }, [emailFromParams, accessToken]);
+
+    if (!profileData) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <>
-            <Sidebar />
+            <Sidebar profileData={profileData} />
             <div className={cx('content')}>
-                <PostList posts={posts} />
+                {posts.length === 0 && <div>Người dùng chưa có bài viết nào.</div>}
+                <PostList posts={posts} profileData={profileData} emailFromParams={emailFromParams} />
             </div>
             <RightSidebar newsList={newsList} />
         </>

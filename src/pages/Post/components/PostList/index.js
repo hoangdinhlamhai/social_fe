@@ -1,10 +1,10 @@
 import PostItem from '../PostItem';
 
-function PostList({ posts }) {
+function PostList({ posts, profileData, emailFromParams }) {
     return (
         <>
             {posts.map((post, index) => (
-                <PostItem key={index} post={post} />
+                <PostItem key={index} post={post} profileData={profileData} emailFromParams={emailFromParams} />
             ))}
         </>
     );

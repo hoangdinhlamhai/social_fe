@@ -5,6 +5,7 @@ import PostCard from '../PostCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getPostByEmailApi } from '~/services/post.service';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -14,7 +15,7 @@ function ProfileActivity({ profileData }) {
     const [showRight, setShowRight] = useState(false);
     const [posts, setPosts] = useState([]);
 
-    const { accessToken, accountLogin } = useSelector((state) => state.auth);
+    const { accessToken } = useSelector((state) => state.auth);
     const email = profileData.email;
 
     const updateScrollButtons = () => {
@@ -104,7 +105,7 @@ function ProfileActivity({ profileData }) {
             </div>
 
             <div className={cx('view-more')}>
-                <a href="#">Hiển thị tất cả bài đăng →</a>
+                <Link to={`/post/${email}`}>Hiển thị tất cả bài đăng →</Link>
             </div>
         </div>
     );

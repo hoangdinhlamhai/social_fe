@@ -3,7 +3,7 @@ const routes = {
     profile: '/profile/:email',
     login: '/login',
     register: '/register',
-    post: '/post',
+    post: '/post/:email',
     network: '/network',
     forgotPassword: '/forgot-password',
     verifyOtp: '/verify-otp',

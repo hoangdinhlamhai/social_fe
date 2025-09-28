@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './PostItem.module.scss';
-import { FaThumbsUp, FaComment, FaShare, FaFacebookMessenger, FaRegBookmark, FaCode, FaFlag } from 'react-icons/fa';
-import { GoX } from 'react-icons/go';
+import { FaThumbsUp, FaComment, FaShare, FaFacebookMessenger, FaRegBookmark } from 'react-icons/fa';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { FiLink2 } from 'react-icons/fi';
@@ -10,11 +9,14 @@ import { IoIosEyeOff } from 'react-icons/io';
 import { MdOutlineCancel } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
-function PostItem({ post }) {
+function PostItem({ post, profileData, emailFromParams }) {
+    const { accountLogin } = useSelector((state) => state.auth);
     const [showMore, setShowMore] = useState(false);
+    const emailLogin = accountLogin?.email;
 
     const toggleShowMore = () => setShowMore((prev) => !prev);
     const isLong = post?.content?.length > 200;
@@ -27,11 +29,13 @@ function PostItem({ post }) {
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('top')}>
-                    <img src="" alt="avatar" className={cx('logo')} />
+                    <img src={profileData.avatarUrl} alt="avatar" className={cx('logo')} />
                     <div className={cx('info-actions')}>
                         <div className={cx('info')}>
-                            <h4>Người đăng</h4>
-                            <p> người theo dõi</p>
+                            <h4>
+                                {profileData.lastName} {profileData.firstName}
+                            </h4>
+                            {/* <p> người theo dõi</p> */}
                             <span>{post.createAt} · 🌐</span>
                         </div>
                         <div className={cx('actions')}>
@@ -57,27 +61,17 @@ function PostItem({ post }) {
                                         <span>Sao chép liên kết đến bài đăng</span>
                                     </DropdownMenu.Item>
                                     <DropdownMenu.Item className={cx('dropdown-item')}>
-                                        <FaCode className={cx('icon')} />
-                                        <span>Nhúng bài đăng này</span>
-                                    </DropdownMenu.Item>
-                                    <DropdownMenu.Item className={cx('dropdown-item')}>
                                         <IoIosEyeOff className={cx('icon')} />
                                         <span>Không quan tâm</span>
                                     </DropdownMenu.Item>
-                                    <DropdownMenu.Item className={cx('dropdown-item')}>
-                                        <MdOutlineCancel className={cx('icon')} />
-                                        <span>Bỏ theo dõi</span>
-                                    </DropdownMenu.Item>
-                                    <DropdownMenu.Item className={cx('dropdown-item')}>
-                                        <FaFlag className={cx('icon')} />
-                                        <span>Báo cáo bài đăng</span>
-                                    </DropdownMenu.Item>
+                                    {emailLogin === emailFromParams && (
+                                        <DropdownMenu.Item className={cx('dropdown-item')}>
+                                            <MdOutlineCancel className={cx('icon')} />
+                                            <span>Xoá bài viết</span>
+                                        </DropdownMenu.Item>
+                                    )}
                                 </DropdownMenu.Content>
                             </DropdownMenu.Root>
-
-                            <button className={cx('close-btn')}>
-                                <GoX />
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -92,7 +86,7 @@ function PostItem({ post }) {
                         </span>
                     )}
                 </p>
-                <span className={cx('translate')}>Hiển thị bản dịch</span>
+                {/* <span className={cx('translate')}>Hiển thị bản dịch</span> */}
             </div>
 
             <div className={cx('post-image')}>

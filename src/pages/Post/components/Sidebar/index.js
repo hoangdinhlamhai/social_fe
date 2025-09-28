@@ -5,10 +5,10 @@ import SidebarMenu from './SidebarMenu';
 
 const cx = classNames.bind(styles);
 
-function Sidebar() {
+function Sidebar({ profileData }) {
     return (
         <div className={cx('sidebar')}>
-            <SidebarProfile />
+            <SidebarProfile profileData={profileData} />
             <SidebarMenu />
         </div>
     );

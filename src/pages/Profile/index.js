@@ -17,8 +17,7 @@ const cx = classNames.bind(styles);
 
 function Profile() {
     const [profileData, setProfileData] = useState(null);
-    const { accessToken, accountLogin } = useSelector((state) => state.auth);
-    const email = accountLogin?.email;
+    const { accessToken } = useSelector((state) => state.auth);
     const { email: emailFromParams } = useParams();
 
     useEffect(() => {
