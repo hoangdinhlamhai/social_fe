@@ -28,14 +28,6 @@ const uploadImageToCloudinary = async (files, accessToken) => {
     });
 };
 
-const createPostApi = async (data, accessToken) => {
-    return axios.post(`${BASE_URL}/api/posts`, data, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-};
-
 const getPostByEmailApi = async (accessToken, email) => {
     return await axios.get(`${BASE_URL}/api/posts`, {
         headers: {
@@ -47,4 +39,20 @@ const getPostByEmailApi = async (accessToken, email) => {
     });
 };
 
-export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByEmailApi };
+const createPostApi = async (data, accessToken) => {
+    return axios.post(`${BASE_URL}/api/posts`, data, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+const deletePostApi = async (postId, accessToken) => {
+    axios.delete(`${BASE_URL}/api/posts/${postId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByEmailApi, deletePostApi };

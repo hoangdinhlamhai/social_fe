@@ -26,6 +26,10 @@ function Post() {
     const [profileData, setProfileData] = useState(null);
     const { email: emailFromParams } = useParams();
 
+    const handleDeletedToReRender = async (id) => {
+        setPosts((prev) => prev.filter((p) => p.id !== id));
+    };
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -58,7 +62,13 @@ function Post() {
             <Sidebar profileData={profileData} />
             <div className={cx('content')}>
                 {posts.length === 0 && <div>Người dùng chưa có bài viết nào.</div>}
-                <PostList posts={posts} profileData={profileData} emailFromParams={emailFromParams} />
+                <PostList
+                    posts={posts}
+                    profileData={profileData}
+                    emailFromParams={emailFromParams}
+                    onDeleted={handleDeletedToReRender}
+                    //nếu muốn dùng callback thì onDeleted={(id) => handleDeletedToReRender(id)}
+                />
             </div>
             <RightSidebar newsList={newsList} />
         </>

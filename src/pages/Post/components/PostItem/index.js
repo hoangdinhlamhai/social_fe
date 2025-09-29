@@ -10,11 +10,12 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import { useSelector } from 'react-redux';
+import { deletePostApi } from '~/services/post.service';
 
 const cx = classNames.bind(styles);
 
-function PostItem({ post, profileData, emailFromParams }) {
-    const { accountLogin } = useSelector((state) => state.auth);
+function PostItem({ post, profileData, emailFromParams, onDeleted }) {
+    const { accountLogin, accessToken } = useSelector((state) => state.auth);
     const [showMore, setShowMore] = useState(false);
     const emailLogin = accountLogin?.email;
 
@@ -24,6 +25,15 @@ function PostItem({ post, profileData, emailFromParams }) {
     const [showAllImages, setShowAllImages] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = post.postImages || [];
+
+    const handleDeletePost = async (accessToken, postId) => {
+        try {
+            await deletePostApi(postId, accessToken);
+            onDeleted(postId); // Gọi hàm onDeleted từ component cha để cập nhật danh sách bài viết
+        } catch (error) {
+            console.error('Lỗi khi xoá bài viết:', error);
+        }
+    };
 
     return (
         <div className={cx('wrapper')}>
@@ -65,7 +75,10 @@ function PostItem({ post, profileData, emailFromParams }) {
                                         <span>Không quan tâm</span>
                                     </DropdownMenu.Item>
                                     {emailLogin === emailFromParams && (
-                                        <DropdownMenu.Item className={cx('dropdown-item')}>
+                                        <DropdownMenu.Item
+                                            className={cx('dropdown-item')}
+                                            onClick={() => handleDeletePost(accessToken, post.id)}
+                                        >
                                             <MdOutlineCancel className={cx('icon')} />
                                             <span>Xoá bài viết</span>
                                         </DropdownMenu.Item>
