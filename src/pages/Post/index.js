@@ -30,11 +30,32 @@ function Post() {
         setPosts((prev) => prev.filter((p) => p.id !== id));
     };
 
+    const handleUpdatedToReRender = async (updatedPostData) => {
+        //vì updatedPostData có imageUrls, nhưng trong post lại là postImages: [ { id: 101, url: "..." }, { id: 102, url: "..." } ],
+        // => không update được hình ảnh ở UI
+        // gửi tạm updatedPostData từ EditPostModal để cập nhật UI trong PostList
+        setPosts((prev) =>
+            prev.map((p) =>
+                p.id === updatedPostData.postId
+                    ? {
+                          ...p,
+                          content: updatedPostData.content,
+                          postImages: updatedPostData.imageUrls.map((img, index) => ({
+                              id: index,
+                              url: img,
+                          })),
+                      }
+                    : p,
+            ),
+        );
+    };
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await getPostByEmailApi(accessToken, emailFromParams);
                 setPosts(response.data);
+                console.log('Bài đăng:', response.data);
             } catch (error) {
                 console.error('Lỗi khi lấy bài đăng:', error);
             }
@@ -68,6 +89,7 @@ function Post() {
                     emailFromParams={emailFromParams}
                     onDeleted={handleDeletedToReRender}
                     //nếu muốn dùng callback thì onDeleted={(id) => handleDeletedToReRender(id)}
+                    onUpdated={handleUpdatedToReRender} //hàm re-render sau khi update post
                 />
             </div>
             <RightSidebar newsList={newsList} />

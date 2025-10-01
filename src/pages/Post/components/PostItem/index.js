@@ -1,20 +1,20 @@
 import { useState } from 'react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames/bind';
 import styles from './PostItem.module.scss';
-import { FaThumbsUp, FaComment, FaShare, FaFacebookMessenger, FaRegBookmark } from 'react-icons/fa';
+import { FaThumbsUp, FaComment, FaShare, FaFacebookMessenger, FaRegBookmark, FaPen, FaLink } from 'react-icons/fa';
 import { AiOutlineEllipsis } from 'react-icons/ai';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { FiLink2 } from 'react-icons/fi';
-import { IoIosEyeOff } from 'react-icons/io';
+import { IoIosArrowForward, IoIosArrowBack, IoIosEyeOff } from 'react-icons/io';
+// import { FiLink2 } from 'react-icons/fi';
 import { MdOutlineCancel } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
-import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import { useSelector } from 'react-redux';
 import { deletePostApi } from '~/services/post.service';
+import EditPostModal from '../EditPostModal';
 
 const cx = classNames.bind(styles);
 
-function PostItem({ post, profileData, emailFromParams, onDeleted }) {
+function PostItem({ post, profileData, emailFromParams, onDeleted, onUpdated }) {
     const { accountLogin, accessToken } = useSelector((state) => state.auth);
     const [showMore, setShowMore] = useState(false);
     const emailLogin = accountLogin?.email;
@@ -25,6 +25,8 @@ function PostItem({ post, profileData, emailFromParams, onDeleted }) {
     const [showAllImages, setShowAllImages] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = post.postImages || [];
+
+    const [isEditing, setIsEditing] = useState(false);
 
     const handleDeletePost = async (accessToken, postId) => {
         try {
@@ -66,9 +68,18 @@ function PostItem({ post, profileData, emailFromParams, onDeleted }) {
                                         <FaRegBookmark className={cx('icon')} />
                                         <span>Lưu</span>
                                     </DropdownMenu.Item>
+                                    {emailLogin === emailFromParams && (
+                                        <DropdownMenu.Item
+                                            className={cx('dropdown-item')}
+                                            onClick={() => setIsEditing(true)}
+                                        >
+                                            <FaPen className={cx('icon')} />
+                                            <span>Sửa bài viết</span>
+                                        </DropdownMenu.Item>
+                                    )}
                                     <DropdownMenu.Item className={cx('dropdown-item')}>
-                                        <FiLink2 className={cx('icon')} />
-                                        <span>Sao chép liên kết đến bài đăng</span>
+                                        <FaLink className={cx('icon')} />
+                                        <span>Sao chép liên kết</span>
                                     </DropdownMenu.Item>
                                     <DropdownMenu.Item className={cx('dropdown-item')}>
                                         <IoIosEyeOff className={cx('icon')} />
@@ -86,6 +97,14 @@ function PostItem({ post, profileData, emailFromParams, onDeleted }) {
                                 </DropdownMenu.Content>
                             </DropdownMenu.Root>
                         </div>
+
+                        <EditPostModal
+                            isOpen={isEditing}
+                            onRequestClose={() => setIsEditing(false)}
+                            profileData={profileData}
+                            post={post}
+                            onUpdated={onUpdated} // Gọi hàm onUpdated khi cập nhật bài viết thành công
+                        />
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import PostItem from '../PostItem';
 
-function PostList({ posts, profileData, emailFromParams, onDeleted }) {
+function PostList({ posts, profileData, emailFromParams, onDeleted, onUpdated }) {
     return (
         <>
             {posts.map((post, index) => (
@@ -10,6 +10,7 @@ function PostList({ posts, profileData, emailFromParams, onDeleted }) {
                     profileData={profileData}
                     emailFromParams={emailFromParams}
                     onDeleted={onDeleted}
+                    onUpdated={onUpdated}
                 />
             ))}
         </>

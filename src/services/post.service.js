@@ -47,6 +47,14 @@ const createPostApi = async (data, accessToken) => {
     });
 };
 
+const updatePostApi = async (accessToken, postId, data) => {
+    axios.patch(`${BASE_URL}/api/posts/${postId}`, data, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
 const deletePostApi = async (postId, accessToken) => {
     axios.delete(`${BASE_URL}/api/posts/${postId}`, {
         headers: {
@@ -55,4 +63,4 @@ const deletePostApi = async (postId, accessToken) => {
     });
 };
 
-export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByEmailApi, deletePostApi };
+export { createPostApi, getMeProfileApi, uploadImageToCloudinary, getPostByEmailApi, deletePostApi, updatePostApi };
