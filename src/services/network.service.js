@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080';
 
+//axios.get(url, config)
 const getFriendRequestByReceiverId = async (accessToken, receiverId) => {
     try {
         const response = await axios.get(`${BASE_URL}/api/friend-requests/receiver`, {
@@ -19,4 +20,39 @@ const getFriendRequestByReceiverId = async (accessToken, receiverId) => {
     }
 };
 
-export { getFriendRequestByReceiverId };
+//axios.post(url, data, config)
+const acceptFriendRequest = async (accessToken, requestId) => {
+    try {
+        await axios.post(
+            `${BASE_URL}/api/friend-requests/accept/${requestId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            },
+        );
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+        throw error;
+    }
+};
+
+const declineFriendRequest = async (accessToken, requestId) => {
+    try {
+        await axios.post(
+            `${BASE_URL}/api/friend-requests/decline/${requestId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            },
+        );
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+        throw error;
+    }
+};
+
+export { getFriendRequestByReceiverId, acceptFriendRequest, declineFriendRequest };

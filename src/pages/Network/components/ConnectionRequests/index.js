@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './ConnectionRequests.module.scss';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { getFriendRequestByReceiverId } from '~/services/network.service';
+import { getFriendRequestByReceiverId, acceptFriendRequest, declineFriendRequest } from '~/services/network.service';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +23,24 @@ function ConnectionRequests() {
         fetchFriendRequests();
     }, [accessToken, receiverId]);
 
+    const handleAccept = async (requestId) => {
+        try {
+            await acceptFriendRequest(accessToken, requestId);
+            setFriendRequests((prev) => prev.filter((request) => request.id !== requestId)); //set lại friendRequests để re-render
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+        }
+    };
+
+    const handleDecline = async (requestId) => {
+        try {
+            await declineFriendRequest(accessToken, requestId);
+            setFriendRequests((prev) => prev.filter((request) => request.id !== requestId)); //set lại friendRequests để re-render
+        } catch (error) {
+            console.error('Error declining friend request:', error);
+        }
+    };
+
     if (!friendRequests) {
         return null;
     }
@@ -31,7 +49,7 @@ function ConnectionRequests() {
         <div className={cx('requests-wrapper')}>
             <h2 className={cx('title')}>Lời mời kết nối</h2>
             {friendRequests.length === 0 ? (
-                <p className={cx('empty')}>Không có lời mời nào đang chờ</p>
+                <p className={cx('empty')}>Không có lời mời</p>
             ) : (
                 <ul className={cx('list')}>
                     {friendRequests.map((req) => (
@@ -47,8 +65,12 @@ function ConnectionRequests() {
                                 </h3>
                                 <p className={cx('title-job')}>{req.sender.bio}</p>
                                 <div className={cx('actions')}>
-                                    <button className={cx('accept')}>Chấp nhận</button>
-                                    <button className={cx('ignore')}>Bỏ qua</button>
+                                    <button className={cx('accept')} onClick={() => handleAccept(req.id)}>
+                                        Chấp nhận
+                                    </button>
+                                    <button className={cx('ignore')} onClick={() => handleDecline(req.id)}>
+                                        Bỏ qua
+                                    </button>
                                 </div>
                             </div>
                         </li>
