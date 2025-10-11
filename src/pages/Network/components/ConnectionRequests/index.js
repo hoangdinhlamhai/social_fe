@@ -14,7 +14,7 @@ function ConnectionRequests() {
     useEffect(() => {
         const fetchFriendRequests = async () => {
             try {
-                const friendRequests = await getFriendRequestByReceiverId(accessToken, receiverId);
+                const friendRequests = await getFriendRequestByReceiverId(accessToken, receiverId, 'PENDING');
                 setFriendRequests(friendRequests);
             } catch (error) {
                 console.error('Error fetching friend requests:', error);
