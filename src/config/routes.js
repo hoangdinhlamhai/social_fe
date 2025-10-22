@@ -9,6 +9,7 @@ const routes = {
     verifyOtp: '/verify-otp',
     newPassword: '/new-password',
     chat: '/chat/:roomId',
+    listFriends: '/list-friends',
 };
 
 export default routes;

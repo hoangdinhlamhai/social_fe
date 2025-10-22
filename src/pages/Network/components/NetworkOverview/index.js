@@ -3,6 +3,7 @@ import styles from './NetworkOverview.module.scss';
 import { getFriendRequestByReceiverId, getFriendRequestBySenderId } from '~/services/network.service';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -55,10 +56,12 @@ function NetworkOverview() {
                     <span>{friendRequests}</span>
                     <p>Đã gửi</p>
                 </div>
-                <div>
-                    <span>{friends}</span>
-                    <p>Bạn bè</p>
-                </div>
+                <Link to="/list-friends">
+                    <div>
+                        <span>{friends}</span>
+                        <p>Bạn bè</p>
+                    </div>
+                </Link>
                 <div>
                     <span>{pendingFriends}</span>
                     <p>Đang chờ</p>
