@@ -55,7 +55,12 @@ function Sidebar({ chatRooms }) {
                 {/* map(item => ( ... )) với dấu ngoặc đơn `()`, React mong đợi bạn trả về một phần tử JSX. không thể chèn các dòng lệnh khác vào giữa. */}
                 {chatRooms
                     .slice() // tạo bản sao mảng để không làm thay đổi mảng gốc
-                    .sort((a, b) => new Date(b.lastMessage.sentAt) - new Date(a.lastMessage.sentAt))
+                    .sort((a, b) => {
+                        if (!a.lastMessage && !b.lastMessage) return 0;
+                        if (!a.lastMessage) return -1; // phòng A chưa có tin → lên trước
+                        if (!b.lastMessage) return 1; // phòng B chưa có tin → lên trước
+                        return new Date(b.lastMessage.sentAt) - new Date(a.lastMessage.sentAt);
+                    })
                     .map((room) => {
                         const guestUser = room.participantUser.find((user) => user.id !== accountLogin.id);
                         const lastMessage = room.lastMessage;
@@ -78,10 +83,14 @@ function Sidebar({ chatRooms }) {
                                     </div>
                                     <div className={cx('chat-last')}>
                                         <span className={cx('last-msg')}>
-                                            {lastMessage.senderId === accountLogin.id ? 'Bạn: ' : ''}{' '}
-                                            {lastMessage.content}
+                                            {lastMessage?.senderId === accountLogin.id
+                                                ? 'Bạn: '
+                                                : 'Chưa có tin nhắn nào'}{' '}
+                                            {lastMessage?.content}
                                         </span>
-                                        <span className={cx('time')}>{dayjs(lastMessage.sentAt).fromNow()}</span>
+                                        <span className={cx('time')}>
+                                            {lastMessage?.sentAt ? dayjs(lastMessage.sentAt).fromNow() : ''}
+                                        </span>
                                     </div>
                                 </div>
                             </Link>

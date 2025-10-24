@@ -72,4 +72,23 @@ const declineFriendRequest = async (accessToken, requestId) => {
     }
 };
 
-export { getFriendRequestByReceiverId, acceptFriendRequest, declineFriendRequest, getFriendRequestBySenderId };
+const unfriendApi = async (id, accessToken) => {
+    try {
+        await axios.delete(`${BASE_URL}/api/friend-requests/${id}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    } catch (error) {
+        console.error('Error delete friend:', error);
+        throw error;
+    }
+};
+
+export {
+    getFriendRequestByReceiverId,
+    acceptFriendRequest,
+    declineFriendRequest,
+    getFriendRequestBySenderId,
+    unfriendApi,
+};
