@@ -33,6 +33,15 @@ const posts = [
         image: postImage,
         likes: 15,
     },
+    {
+        avatar: logo,
+        name: 'FPT Software',
+        followers: '371.161',
+        time: '80 giờ',
+        content: `At the World IT Show 2025, South Korea’s largest ICT exhibition, FPT reaffirmed its commitment to enabling the next wave of digital transformation. Through our Korea Onshore Development Center model and Global Delivery Centers, we...`,
+        image: postImage,
+        likes: 15,
+    },
 ];
 
 function Home() {
@@ -58,7 +67,9 @@ function Home() {
             <div className={cx('content')}>
                 <CreatePost profileData={profileData} />
                 <SortBar />
-                <PostList posts={posts} />
+                <div className={cx('post-list-wrapper')}>
+                    <PostList posts={posts} />
+                </div>
             </div>
             <RightSidebar newsList={newsList} />
         </>
