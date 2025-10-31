@@ -5,6 +5,7 @@ import { FaImage } from 'react-icons/fa';
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { createPostApi, uploadImageToCloudinary } from '~/services/post.service';
+import imageCompression from 'browser-image-compression';
 
 const cx = classNames.bind(styles);
 
@@ -28,7 +29,18 @@ function CreatePostModal({ isOpen, onRequestClose, profileData }) {
 
     const handleCreatePost = async () => {
         try {
-            const responseData = await uploadImageToCloudinary(selectedImages, accessToken);
+            const compressedFiles = [];
+            for (const file of selectedImages) {
+                const options = {
+                    maxSizeMB: 2, // Giới hạn ~2MB sau khi nén
+                    maxWidthOrHeight: 1920, // Resize nếu ảnh quá lớn
+                    useWebWorker: true,
+                };
+
+                const compressedFile = await imageCompression(file, options);
+                compressedFiles.push(compressedFile);
+            }
+            const responseData = await uploadImageToCloudinary(compressedFiles, accessToken);
             const imageUrls = responseData.data;
 
             const newPostData = {
@@ -78,7 +90,7 @@ function CreatePostModal({ isOpen, onRequestClose, profileData }) {
                     className={cx('close-btn')}
                     onClick={() => {
                         onRequestClose();
-                        setSelectedImages([]); // Reset selected images when closing modal
+                        setSelectedImages([]);
                     }}
                 >
                     ×

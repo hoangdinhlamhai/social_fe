@@ -145,6 +145,10 @@
   .title {
     color: #666;
     font-size: 13px;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
