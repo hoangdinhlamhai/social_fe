@@ -6,8 +6,9 @@ import { GoX } from 'react-icons/go';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { FiLink2 } from 'react-icons/fi';
-import { IoIosEyeOff } from 'react-icons/io';
+import { IoIosArrowForward, IoIosArrowBack, IoIosEyeOff } from 'react-icons/io';
 import { MdOutlineCancel } from 'react-icons/md';
+import { IoClose } from 'react-icons/io5';
 
 const cx = classNames.bind(styles);
 
@@ -17,16 +18,22 @@ function PostItem({ post }) {
     const toggleShowMore = () => setShowMore((prev) => !prev);
     const isLong = post?.content?.length > 200;
 
+    const [showAllImages, setShowAllImages] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const images = post.postImages || [];
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('top')}>
-                    <img src={post.avatar} alt="avatar" className={cx('logo')} />
+                    <img src={post.user.avatarUrl} alt="avatar" className={cx('logo')} />
                     <div className={cx('info-actions')}>
                         <div className={cx('info')}>
-                            <h4>{post.name}</h4>
-                            <p>{post.followers} người theo dõi</p>
-                            <span>{post.time} · 🌐</span>
+                            <h4>
+                                {post.user.lastName} {post.user.firstName}
+                            </h4>
+                            {/* <p>{post.followers} người theo dõi</p> */}
+                            <span>{post.createAt}</span>
                         </div>
                         <div className={cx('actions')}>
                             <DropdownMenu.Root>
@@ -89,12 +96,41 @@ function PostItem({ post }) {
                 <span className={cx('translate')}>Hiển thị bản dịch</span>
             </div>
 
-            <div className={cx('image')}>
-                <img src={post.image} alt="post" />
+            <div className={cx('post-image')}>
+                {images.length > 0 && !showAllImages && (
+                    // không dùng callback thì sẽ gọi hàm ngay lập tức khi component render chứ không đợi click
+                    <div className={cx('image-preview')} onClick={() => setShowAllImages(true)}>
+                        <img src={images[0].url} alt="post" />
+                        {images.length > 1 && <div className={cx('image-overlay')}>+{images.length - 1} ảnh</div>}
+                    </div>
+                )}
+                {showAllImages && (
+                    <div className={cx('lightbox')}>
+                        <button className={cx('close-btn')} onClick={() => setShowAllImages(false)}>
+                            <IoClose />
+                        </button>
+
+                        <button
+                            className={cx('nav-btn', 'left')}
+                            onClick={() => setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
+                        >
+                            <IoIosArrowBack />
+                        </button>
+
+                        <img className={cx('lightbox-image')} src={images[currentImageIndex].url} alt="post" />
+
+                        <button
+                            className={cx('nav-btn', 'right')}
+                            onClick={() => setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
+                        >
+                            <IoIosArrowForward />
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className={cx('footer')}>
-                <p>{post.likes} lượt thích</p>
+                <p>lượt thích</p>
                 <div className={cx('actions')}>
                     <button>
                         <FaThumbsUp /> Thích
