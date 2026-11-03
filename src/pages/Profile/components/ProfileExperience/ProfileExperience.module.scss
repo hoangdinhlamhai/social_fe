@@ -5,6 +5,14 @@
     border: 1px solid #ddd;
     margin-bottom: 12px;
 
+    .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    button { background: transparent; color: #0a66c2; border: 1px solid #0a66c2; border-radius: 16px; padding: 4px 12px; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .actions { display: flex; gap: 8px; margin-top: 8px; }
+    .error { color: #b42318; }
+    .content { min-width: 0; overflow-wrap: anywhere; }
+    .description { white-space: pre-wrap; }
+
     h2 {
         font-size: 18px;
         font-weight: 700;

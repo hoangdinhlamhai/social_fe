@@ -21,18 +21,21 @@ function Profile() {
     const { email: emailFromParams } = useParams();
 
     useEffect(() => {
+        let active = true;
+        setProfileData(null);
         const fetchProfileData = async () => {
             try {
                 const response = await getUserProfileApi(accessToken, emailFromParams);
-                setProfileData(response);
+                if (active) setProfileData(response);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchProfileData();
+        return () => { active = false; };
     }, [emailFromParams, accessToken]);
 
-    if (!profileData) {
+    if (!profileData || profileData.email !== emailFromParams) {
         return <div>Loading...</div>;
     }
 
