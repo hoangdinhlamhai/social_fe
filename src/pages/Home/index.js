@@ -1,7 +1,5 @@
 import classNames from 'classnames/bind';
 
-import logo from '~/assets/images/bld.jpeg';
-import postImage from '~/assets/images/post-image.jpg';
 import styles from './Home.module.scss';
 import Sidebar from '~/pages/Home/components/Sidebar';
 import CreatePost from '~/pages/Home/components/CreatePost';
@@ -21,18 +19,6 @@ const newsList = [
     { title: 'Canada heads to the polls', time: '1 giờ trước', readers: '4.534 người đọc' },
     { title: 'Huawei debuts new AI chip', time: '1 giờ trước', readers: '2.383 người đọc' },
     { title: 'Temu, Shein prices start to surge', time: '1 giờ trước', readers: '2.251 người đọc' },
-];
-
-const posts = [
-    {
-        avatar: logo,
-        name: 'FPT Software',
-        followers: '371.161',
-        time: '8 giờ',
-        content: `At the World IT Show 2025, South Korea’s largest ICT exhibition, FPT reaffirmed its commitment to enabling the next wave of digital transformation. Through our Korea Onshore Development Center model and Global Delivery Centers, we...`,
-        image: postImage,
-        likes: 15,
-    },
 ];
 
 function Home() {
@@ -58,7 +44,9 @@ function Home() {
             <div className={cx('content')}>
                 <CreatePost profileData={profileData} />
                 <SortBar />
-                <PostList posts={posts} />
+                <div className={cx('post-list-wrapper')}>
+                    <PostList />
+                </div>
             </div>
             <RightSidebar newsList={newsList} />
         </>
