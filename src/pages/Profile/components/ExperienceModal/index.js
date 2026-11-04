@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
+import MonthYearPicker from '~/components/MonthYearPicker';
 import classNames from 'classnames/bind';
 import styles from './ExperienceModal.module.scss';
 
@@ -27,7 +28,7 @@ function ExperienceModal({ isOpen, experience, isSaving, error, onSubmit, onRequ
         if (!form.title.trim() || !form.companyName.trim() || !form.startDate) {
             setValidationError('Vui lòng nhập chức danh, công ty và thời gian bắt đầu.'); return;
         }
-        if (form.startDate > maxMonth || (!form.current && (!form.endDate || form.endDate < form.startDate || form.endDate > maxMonth))) {
+        if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(form.startDate) || form.startDate > maxMonth || (!form.current && (!/^\d{4}-(0[1-9]|1[0-2])$/.test(form.endDate) || form.endDate < form.startDate || form.endDate > maxMonth))) {
             setValidationError('Thời gian làm việc không hợp lệ.'); return;
         }
         onSubmit({ ...form, title: form.title.trim(), companyName: form.companyName.trim(),
@@ -57,10 +58,10 @@ function ExperienceModal({ isOpen, experience, isSaving, error, onSubmit, onRequ
                         <input type="checkbox" name="current" checked={form.current} onChange={change} /> Đang làm việc tại đây
                     </label>
                     <label htmlFor="experience-start">Bắt đầu *</label>
-                    <input id="experience-start" type="month" name="startDate" value={form.startDate} onChange={change} max={maxMonth} required />
+                    <MonthYearPicker id="experience-start" name="startDate" value={form.startDate} onChange={change} max={maxMonth} required />
                     {!form.current && <>
                         <label htmlFor="experience-end">Kết thúc *</label>
-                        <input id="experience-end" type="month" name="endDate" value={form.endDate} onChange={change} min={form.startDate} max={maxMonth} required />
+                        <MonthYearPicker id="experience-end" name="endDate" value={form.endDate} onChange={change} max={maxMonth} required />
                     </>}
                     <label htmlFor="experience-description">Mô tả</label>
                     <textarea id="experience-description" name="description" value={form.description} onChange={change} maxLength={5000} rows={4} />
