@@ -1,60 +1,105 @@
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Building2 } from 'lucide-react';
 import classNames from 'classnames/bind';
 import styles from './ProfileExperience.module.scss';
-import logo from '~/assets/images/bld.jpeg';
+import ExperienceModal from '../ExperienceModal';
+import { getExperiencesApi, createExperienceApi, updateExperienceApi, deleteExperienceApi } from '~/services/experience.service';
 
 const cx = classNames.bind(styles);
+const sortExperiences = (items) => [...items].sort((a, b) =>
+    Number(b.current) - Number(a.current) || (b.startDate || '').localeCompare(a.startDate || '') || b.id - a.id);
+const monthLabel = (date) => date ? `thg ${Number(date.slice(5, 7))} ${date.slice(0, 4)}` : '';
 
-const experiences = [
-    {
-        logo: { logo },
-        title: 'Data Analyst Intern',
-        company: 'VALUENEX',
-        type: 'Internship',
-        time: 'thg 4 2024 - Hiện tại · 1 năm 2 tháng',
-        location: 'Palo Alto, California, United States',
-        description: '',
-        skills: 'Data Analysis, Marketing và hơn 2 kỹ năng khác',
-    },
-    {
-        logo: { logo },
-        title: 'Content Creator',
-        company: 'YouTube',
-        type: 'Self-employed',
-        time: 'thg 1 2017 - Hiện tại · 8 năm 5 tháng',
-        location: 'United States',
-        description:
-            '3.5 million+ Subscribers, 1.3 Billion+ total views, We Choice Awards Top 5, One of the top Youtubers in Vietnam. I produce, edit, post, and market my content, and I have worked with 50+ domestic and international brands (DuoLingo, Nestle, Notion, Google, Meta, Inivisalign, SamYang foods, Shiseido...)',
-        skills: 'Management, Video Editing và hơn 3 kỹ năng khác',
-    },
-];
+function ExperienceList({ email }) {
+    const { accessToken, accountLogin } = useSelector(state => state.auth);
+    const isOwner = Boolean(email && accountLogin?.email === email);
+    const [experiences, setExperiences] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
+    const [error, setError] = useState('');
+    const [retry, setRetry] = useState(0);
+    const [modal, setModal] = useState(null);
+    const [saving, setSaving] = useState(false);
+    const busy = useRef(false);
+    const mounted = useRef(false);
 
-function ProfileExperience() {
+    useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+    useEffect(() => {
+        let active = true;
+        setLoading(true); setLoadError(false);
+        getExperiencesApi(accessToken, email).then(data => {
+            if (active) setExperiences(sortExperiences(data));
+        }).catch(() => { if (active) setLoadError(true); })
+            .finally(() => { if (active) setLoading(false); });
+        return () => { active = false; };
+    }, [email, accessToken, retry]);
+
+    const save = async (data) => {
+        if (!isOwner || busy.current) return;
+        busy.current = true; setSaving(true); setError('');
+        try {
+            const result = modal.experience
+                ? await updateExperienceApi(modal.experience.id, data, accessToken)
+                : await createExperienceApi(data, accessToken);
+            if (!mounted.current) return;
+            setExperiences(prev => sortExperiences([...prev.filter(item => item.id !== result.id), result]));
+            setModal(null);
+        } catch (err) {
+            if (mounted.current) setError('Không lưu được kinh nghiệm. Vui lòng kiểm tra thông tin và thử lại.');
+        } finally {
+            busy.current = false;
+            if (mounted.current) setSaving(false);
+        }
+    };
+    const remove = async (experience) => {
+        if (!isOwner || busy.current || !window.confirm(`Xóa kinh nghiệm “${experience.title || experience.companyName}”?`)) return;
+        busy.current = true; setSaving(true); setError('');
+        try {
+            await deleteExperienceApi(experience.id, accessToken);
+            if (mounted.current) setExperiences(prev => prev.filter(item => item.id !== experience.id));
+        } catch (err) {
+            if (mounted.current) setError('Không xóa được kinh nghiệm. Vui lòng thử lại.');
+        } finally {
+            busy.current = false;
+            if (mounted.current) setSaving(false);
+        }
+    };
+    const open = (experience = null) => { setError(''); setModal({ experience }); };
+
     return (
-        <div className={cx('experience-section')}>
-            <h2>Kinh nghiệm</h2>
-            {experiences.map((exp, index) => (
-                <div key={index} className={cx('experience-item')}>
-                    <div className={cx('logo')}>
-                        <img src={logo} alt="company logo" />
-                    </div>
+        <section className={cx('experience-section')} aria-label="Kinh nghiệm">
+            <div className={cx('header')}>
+                <h2>Kinh nghiệm</h2>
+                {isOwner && <button disabled={saving || loading || loadError} onClick={() => open()}>Thêm kinh nghiệm</button>}
+            </div>
+            {loading ? <p role="status">Đang tải kinh nghiệm...</p> : loadError ? (
+                <div role="alert">Không tải được kinh nghiệm. <button onClick={() => setRetry(prev => prev + 1)}>Thử lại</button></div>
+            ) : experiences.length === 0 ? <p>Chưa có kinh nghiệm làm việc.</p> : experiences.map(exp => (
+                <div key={exp.id} className={cx('experience-item')}>
+                    <div className={cx('logo')}><Building2 size={36} aria-hidden="true" /></div>
                     <div className={cx('content')}>
-                        <div className={cx('title')}>{exp.title}</div>
-                        <div className={cx('company')}>
-                            {exp.company} · {exp.type}
-                        </div>
-                        <div className={cx('time')}>{exp.time}</div>
-                        <div className={cx('location')}>{exp.location}</div>
+                        <div className={cx('title')}>{exp.title || 'Kinh nghiệm làm việc'}</div>
+                        <div className={cx('company')}>{[exp.companyName, exp.employmentType].filter(Boolean).join(' · ')}</div>
+                        <div className={cx('time')}>{[monthLabel(exp.startDate), exp.current ? 'Hiện tại' : monthLabel(exp.endDate)].filter(Boolean).join(' - ')}</div>
+                        {exp.location && <div className={cx('location')}>{exp.location}</div>}
                         {exp.description && <p className={cx('description')}>{exp.description}</p>}
-                        <div className={cx('skills')}>{exp.skills}</div>
+                        {isOwner && <div className={cx('actions')}>
+                            <button aria-label={`Sửa ${exp.title || exp.companyName}`} disabled={saving} onClick={() => open(exp)}>Sửa</button>
+                            <button aria-label={`Xóa ${exp.title || exp.companyName}`} disabled={saving} onClick={() => remove(exp)}>Xóa</button>
+                        </div>}
                     </div>
                 </div>
             ))}
-
-            <div className={cx('view-more')}>
-                <a href="#">Hiển thị tất cả kinh nghiệm →</a>
-            </div>
-        </div>
+            {error && !modal && <p role="alert" className={cx('error')}>{error}</p>}
+            {modal && isOwner && <ExperienceModal isOpen experience={modal.experience} isSaving={saving} error={error}
+                onSubmit={save} onRequestClose={() => { if (!busy.current) { setModal(null); setError(''); } }} />}
+        </section>
     );
 }
 
+function ProfileExperience({ profileData }) {
+    const { accessToken } = useSelector(state => state.auth);
+    return profileData?.email ? <ExperienceList key={`${profileData.email}:${accessToken}`} email={profileData.email} /> : null;
+}
 export default ProfileExperience;
